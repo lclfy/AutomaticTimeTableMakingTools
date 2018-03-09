@@ -18,7 +18,7 @@ namespace AutomaticTimeTableMakingTools
     {
         List<IWorkbook> NewTimeTablesWorkbooks;
         List<IWorkbook> CurrentTimeTablesWorkbooks;
-        List<Train> allTrains_New = new List<Train>();
+        List<Train> allTrains_New;
         string passingStations = "";
         
         public Main()
@@ -173,7 +173,6 @@ namespace AutomaticTimeTableMakingTools
                     }
                 }
             }
-            stations_tb.Text = allStations;
             passingStations = allStations;
         }
 
@@ -961,7 +960,7 @@ namespace AutomaticTimeTableMakingTools
 
                                             }
                                             tempTrain.newStations = tempStations;
-                                            this.allTrains_New.Add(tempTrain);
+                                            trains.Add(tempTrain);
                                         }
                                     }
                                 }
@@ -970,7 +969,9 @@ namespace AutomaticTimeTableMakingTools
                     }
                 }
             }
+            allTrains_New = trains;
             this.newTrains_lv.BeginUpdate();
+            newTrains_lv.Items.Clear();
             foreach (Train model in allTrains_New)
             {
                 ListViewItem lvi = new ListViewItem();

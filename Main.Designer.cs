@@ -33,8 +33,6 @@
             this.NewTimeTableFile_lbl = new System.Windows.Forms.Label();
             this.CurrentTimeTableFile_lbl = new System.Windows.Forms.Label();
             this.getTrains_btn = new System.Windows.Forms.Button();
-            this.stations_tb = new System.Windows.Forms.RichTextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.newTrains_lv = new System.Windows.Forms.ListView();
             this.SuspendLayout();
@@ -87,27 +85,10 @@
             this.getTrains_btn.UseVisualStyleBackColor = true;
             this.getTrains_btn.Click += new System.EventHandler(this.getTrains_btn_Click);
             // 
-            // stations_tb
-            // 
-            this.stations_tb.Location = new System.Drawing.Point(209, 58);
-            this.stations_tb.Name = "stations_tb";
-            this.stations_tb.Size = new System.Drawing.Size(462, 37);
-            this.stations_tb.TabIndex = 6;
-            this.stations_tb.Text = "";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(207, 34);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(53, 12);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "车站总数";
-            // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(207, 117);
+            this.label2.Location = new System.Drawing.Point(207, 21);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(77, 12);
             this.label2.TabIndex = 8;
@@ -115,9 +96,9 @@
             // 
             // newTrains_lv
             // 
-            this.newTrains_lv.Location = new System.Drawing.Point(209, 147);
+            this.newTrains_lv.Location = new System.Drawing.Point(209, 51);
             this.newTrains_lv.Name = "newTrains_lv";
-            this.newTrains_lv.Size = new System.Drawing.Size(849, 285);
+            this.newTrains_lv.Size = new System.Drawing.Size(849, 381);
             this.newTrains_lv.TabIndex = 9;
             this.newTrains_lv.UseCompatibleStateImageBehavior = false;
             // 
@@ -128,8 +109,6 @@
             this.ClientSize = new System.Drawing.Size(1116, 459);
             this.Controls.Add(this.newTrains_lv);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.stations_tb);
             this.Controls.Add(this.getTrains_btn);
             this.Controls.Add(this.CurrentTimeTableFile_lbl);
             this.Controls.Add(this.NewTimeTableFile_lbl);
@@ -149,8 +128,6 @@
         private System.Windows.Forms.Label NewTimeTableFile_lbl;
         private System.Windows.Forms.Label CurrentTimeTableFile_lbl;
         private System.Windows.Forms.Button getTrains_btn;
-        private System.Windows.Forms.RichTextBox stations_tb;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ListView newTrains_lv;
     }
