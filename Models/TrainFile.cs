@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AutomaticTimeTableMakingTools.Models
 {
-    public class FileInfo
+    public class TrainFile
     {
         public string fileName { get; set; }
         public string workbookNum { get; set; }

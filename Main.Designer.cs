@@ -35,6 +35,10 @@
             this.getTrains_btn = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.newTrains_lv = new System.Windows.Forms.ListView();
+            this.mainStationName_tb = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.currentTimeTableStation_tb = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
             // ImportNewTimeTable_btn
@@ -88,7 +92,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(207, 21);
+            this.label2.Location = new System.Drawing.Point(207, 82);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(77, 12);
             this.label2.TabIndex = 8;
@@ -96,17 +100,55 @@
             // 
             // newTrains_lv
             // 
-            this.newTrains_lv.Location = new System.Drawing.Point(209, 51);
+            this.newTrains_lv.Location = new System.Drawing.Point(209, 97);
             this.newTrains_lv.Name = "newTrains_lv";
-            this.newTrains_lv.Size = new System.Drawing.Size(849, 381);
+            this.newTrains_lv.Size = new System.Drawing.Size(849, 256);
             this.newTrains_lv.TabIndex = 9;
             this.newTrains_lv.UseCompatibleStateImageBehavior = false;
+            // 
+            // mainStationName_tb
+            // 
+            this.mainStationName_tb.Location = new System.Drawing.Point(209, 388);
+            this.mainStationName_tb.Name = "mainStationName_tb";
+            this.mainStationName_tb.Size = new System.Drawing.Size(126, 21);
+            this.mainStationName_tb.TabIndex = 10;
+            this.mainStationName_tb.Text = "郑州东京广场/徐兰场";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(207, 369);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(53, 12);
+            this.label1.TabIndex = 11;
+            this.label1.Text = "主站站名";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(207, 17);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(89, 12);
+            this.label3.TabIndex = 13;
+            this.label3.Text = "当前时刻表车站";
+            // 
+            // currentTimeTableStation_tb
+            // 
+            this.currentTimeTableStation_tb.Location = new System.Drawing.Point(209, 32);
+            this.currentTimeTableStation_tb.Name = "currentTimeTableStation_tb";
+            this.currentTimeTableStation_tb.Size = new System.Drawing.Size(849, 47);
+            this.currentTimeTableStation_tb.TabIndex = 14;
+            this.currentTimeTableStation_tb.Text = "";
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1116, 459);
+            this.Controls.Add(this.currentTimeTableStation_tb);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.mainStationName_tb);
             this.Controls.Add(this.newTrains_lv);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.getTrains_btn);
@@ -130,6 +172,10 @@
         private System.Windows.Forms.Button getTrains_btn;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ListView newTrains_lv;
+        private System.Windows.Forms.TextBox mainStationName_tb;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.RichTextBox currentTimeTableStation_tb;
     }
 }
 

@@ -60,7 +60,8 @@
     <Compile Include="Main.Designer.cs">
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\FileInfo.cs" />
+    <Compile Include="Models\TimeTable.cs" />
+    <Compile Include="Models\TrainFile.cs" />
     <Compile Include="Models\Station.cs" />
     <Compile Include="Models\Train.cs" />
     <Compile Include="Program.cs" />
