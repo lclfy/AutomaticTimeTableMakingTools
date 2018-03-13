@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace AutomaticTimeTableMakingTools.Models
 {
@@ -29,10 +30,31 @@ namespace AutomaticTimeTableMakingTools.Models
             //return this.Id.CompareTo(other.Id);//升序
             return this.mainStation.startedTime.CompareTo(otherTrain.mainStation.startedTime);//降序
             */
-            if (this.mainStation == null || otherTrain.mainStation == null)
+            //判断一下发车时间有没有汉字，有汉字说明是接续，此时使用终到时间进行排序。
+            string thisStartedTime = "";
+            string otherStartedTime = "";
+            Regex reg = new Regex(@"[\u4e00-\u9fa5]");
+            if (reg.IsMatch(mainStation.startedTime))
+            {//有中文，则有接续
+                thisStartedTime = mainStation.stoppedTime.Replace(":", "").Trim();
+            }
+            else
+            {
+                thisStartedTime = mainStation.startedTime;
+            }
+            if (reg.IsMatch(otherTrain.mainStation.startedTime))
+            {
+                otherStartedTime = otherTrain.mainStation.stoppedTime.Replace(":", "").Trim();
+            }
+            else
+            {
+                otherStartedTime = otherTrain.mainStation.startedTime;
+            }
+
+            if (mainStation == null || otherTrain.mainStation == null)
                 throw new ArgumentException("Parameters can't be null");
-            char[] arr1 = this.mainStation.startedTime.ToCharArray();
-            char[] arr2 = otherTrain.mainStation.startedTime.ToCharArray();
+            char[] arr1 = thisStartedTime.ToCharArray();
+            char[] arr2 = otherStartedTime.ToCharArray();
             int i = 0, j = 0;
             while (i < arr1.Length && j < arr2.Length)
             {

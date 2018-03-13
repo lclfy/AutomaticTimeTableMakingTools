@@ -39,6 +39,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.currentTimeTableStation_tb = new System.Windows.Forms.RichTextBox();
+            this.trainCount_lb = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // ImportNewTimeTable_btn
@@ -140,11 +141,21 @@
             this.currentTimeTableStation_tb.TabIndex = 14;
             this.currentTimeTableStation_tb.Text = "";
             // 
+            // trainCount_lb
+            // 
+            this.trainCount_lb.AutoSize = true;
+            this.trainCount_lb.Location = new System.Drawing.Point(324, 82);
+            this.trainCount_lb.Name = "trainCount_lb";
+            this.trainCount_lb.Size = new System.Drawing.Size(29, 12);
+            this.trainCount_lb.TabIndex = 16;
+            this.trainCount_lb.Text = "数量";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1116, 459);
+            this.Controls.Add(this.trainCount_lb);
             this.Controls.Add(this.currentTimeTableStation_tb);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label1);
@@ -176,6 +187,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.RichTextBox currentTimeTableStation_tb;
+        private System.Windows.Forms.Label trainCount_lb;
     }
 }
 

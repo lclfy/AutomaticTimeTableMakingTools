@@ -8,6 +8,8 @@ namespace AutomaticTimeTableMakingTools.Models
     {
         public string Title;
         public String[] stations;
-        public List<Train> trains = new List<Train>();
+        //上下行分开
+        public List<Train> upTrains = new List<Train>();
+        public List<Train> downTrains = new List<Train>();
     }
 }
