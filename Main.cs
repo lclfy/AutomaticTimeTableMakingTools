@@ -2123,11 +2123,51 @@ namespace AutomaticTimeTableMakingTools
                                     }
                                     newRow.GetCell(targetColumn).CellStyle = standard;
                                     newRow.GetCell(targetColumn).SetCellValue(_train.stopStation);
-                                    //主站
+                                //主站
+                                //徐兰场进京广场的车特殊显示
+                                bool skipThisTrain = false;
                                     if (findColumn(temp_TimeTableStations, table.Title, i) != null)
                                     {
                                         currentStation = findColumn(temp_TimeTableStations, table.Title, i);
-                                        if (currentStation.stoppedTimeColumn != 0)
+                                    if (table.Title.Equals("徐兰"))
+                                    {
+                                        if (_train.mainStation != null)
+                                        {
+                                            int outPut = 0;
+                                            int.TryParse(_train.mainStation.stationTrackNum, out outPut);
+                                            if (outPut > 0 && outPut < 17)
+                                            {//京广场的车
+                                                Station _station = new Station();
+                                                _station.stationName = "京广场";
+                                                _station.stoppedTime = _train.mainStation.stoppedTime.ToString();
+                                                _station.startedTime = _train.mainStation.startedTime.ToString();
+                                                _train.newStations.Add(_station);
+                                                skipThisTrain = true;
+
+                                            }
+                                        }
+                                    }
+                                    if (currentStation.trackNumColumn != 0)
+                                    {
+                                        if (_train.mainStation.stationTrackNum != null)
+                                        {
+                                            if (newRow.GetCell(currentStation.trackNumColumn) == null)
+                                            {
+                                                newRow.CreateCell(currentStation.trackNumColumn);
+                                            }
+                                            newRow.GetCell(currentStation.trackNumColumn).CellStyle = standard;
+                                            if (skipThisTrain)
+                                            {
+                                                newRow.GetCell(currentStation.trackNumColumn).SetCellValue("通过");
+                                            }
+                                            else
+                                            {
+                                                newRow.GetCell(currentStation.trackNumColumn).SetCellValue(_train.mainStation.stationTrackNum);
+                                            }
+                                            
+                                        }
+                                    }
+                                    if (currentStation.stoppedTimeColumn != 0 && !skipThisTrain)
                                         {
                                             if (_train.mainStation.stoppedTime != null)
                                             {
@@ -2149,7 +2189,7 @@ namespace AutomaticTimeTableMakingTools
                                                 newRow.GetCell(currentStation.stoppedTimeColumn).SetCellValue(stoppedTime);
                                             }
                                         }
-                                        if (currentStation.startedTimeColumn != 0)
+                                        if (currentStation.startedTimeColumn != 0 && !skipThisTrain)
                                         {
                                             if (_train.mainStation.startedTime != null)
                                             {
@@ -2161,18 +2201,7 @@ namespace AutomaticTimeTableMakingTools
                                                 newRow.GetCell(currentStation.startedTimeColumn).SetCellValue(addColonToStartTime(_train.mainStation.startedTime));
                                             }
                                         }
-                                        if (currentStation.trackNumColumn != 0)
-                                        {
-                                            if (_train.mainStation.stationTrackNum != null)
-                                            {
-                                                if (newRow.GetCell(currentStation.trackNumColumn) == null)
-                                                {
-                                                    newRow.CreateCell(currentStation.trackNumColumn);
-                                                }
-                                                newRow.GetCell(currentStation.trackNumColumn).CellStyle = standard;
-                                                newRow.GetCell(currentStation.trackNumColumn).SetCellValue(_train.mainStation.stationTrackNum);
-                                            }
-                                        }
+                                        
 
                                     }
 
@@ -2231,7 +2260,7 @@ namespace AutomaticTimeTableMakingTools
                         try
                         {
                             FileStream file = new FileStream(table.fileName + "-处理后.xls", FileMode.Create);
-
+                            System.Diagnostics.Process.Start("explorer.exe", table.fileName + "-处理后.xls");
                             workbook.Write(file);
 
                             file.Close();
@@ -2244,7 +2273,6 @@ namespace AutomaticTimeTableMakingTools
                         timeTablePlace++;
                     }
             }
-            MessageBox.Show("处理完成");
         }
 
         private string addColonToStartTime(string startTime)
