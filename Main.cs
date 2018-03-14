@@ -1624,6 +1624,10 @@ namespace AutomaticTimeTableMakingTools
                 //这张时刻表有，其他时刻表没有-不匹配主站
                 foreach(Station station in _train.newStations)
                 {
+                    if (_train.firstTrainNum.Equals("G6611"))
+                    {
+                        int ij = 1;
+                    }
                     bool hasTheSameOne = false;
                     for (int i = 0; i < table.stations.Length; i++)
                     {
@@ -1729,6 +1733,39 @@ namespace AutomaticTimeTableMakingTools
                                             }
                                             _train.mainStation = _mainStation;
                                             hasGotOne = true;
+                                        }
+                                        else if (_station.stationName.Contains("开封北"))
+                                        {//徐州方向不经过郑州东站的列车
+                                         //根据上下行，±20分钟决定徐兰场时间
+                                            Station _mainStation = new Station();
+                                            _mainStation.stationName = table.Title;
+                                            int XLTime = 0;
+                                            int.TryParse(_station.stoppedTime.Replace(":", ""), out XLTime);
+                                            if(XLTime == 0)
+                                            {
+                                                int.TryParse(_station.startedTime.Replace(":", ""), out XLTime);
+                                            }
+                                            if(XLTime != 0)
+                                            {
+                                                if (_train.upOrDown)
+                                                {//下行
+                                                    XLTime = XLTime - 20;
+                                                    _mainStation.stoppedTime = "排序用时刻";
+                                                    _mainStation.startedTime = XLTime.ToString();
+                                                }
+                                                else
+                                                {
+                                                    XLTime = XLTime + 20;
+                                                    _mainStation.stoppedTime = "排序用时刻";
+                                                    _mainStation.startedTime = XLTime.ToString();
+                                                }
+                                                _train.mainStation = _mainStation;
+                                                hasGotOne = true;
+                                            }
+                                        }
+                                        else if (_station.stationName.Contains("新乡东"))
+                                        {//北京方向不经过郑州东站的列车
+
                                         }
                                         if (hasGotOne)
                                         {
