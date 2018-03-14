@@ -1952,6 +1952,8 @@ namespace AutomaticTimeTableMakingTools
             int timeTablePlace = 0;
             foreach (IWorkbook workbook in CurrentTimeTablesWorkbooks)
             {
+                //用来给表格填斜杠用的
+                int _stopColumn = 0;
                 //格式
                 ICellStyle standard = workbook.CreateCellStyle();
                 standard.FillForegroundColor = NPOI.HSSF.Util.HSSFColor.White.Index;
@@ -1989,15 +1991,15 @@ namespace AutomaticTimeTableMakingTools
                 }
                 else
                 {
-                    //如果总行数小于车次最多的一列+10的话，创建行直到那么多为止，再顺便创建所有的cell
-                    int lastRowNumber = 10;
+                    //如果总行数小于车次最多的一列+5的话，创建行直到那么多为止，再顺便创建所有的cell
+                    int lastRowNumber = 5;
                     if (table.upTrains.Count > table.downTrains.Count)
                     {
-                        lastRowNumber = table.upTrains.Count + 10;
+                        lastRowNumber = table.upTrains.Count + 5;
                     }
                     else
                     {
-                        lastRowNumber = table.downTrains.Count + 10;
+                        lastRowNumber = table.downTrains.Count + 5;
                     }
                     if (sheet.LastRowNum < lastRowNumber)
                     {
@@ -2011,16 +2013,6 @@ namespace AutomaticTimeTableMakingTools
                     {
                         LastCellNumber = sheet.GetRow(0).LastCellNum;
                     }
-                    /*
-                     for (int d = 0; d<= sheet.LastRowNum; d++)
-                     {
-                         IRow temp_row = sheet.GetRow(d);
-                         for (int c = 0; c <= LastCellNumber; c++)
-                          {
-                                 temp_row.CreateCell(c).SetCellType(CellType.String);
-                          }
-                     }
-                     */
                     //开始分上下行找
                     for (int i = 0; i < table.currentStations.Count; i++)
                     {
@@ -2044,6 +2036,7 @@ namespace AutomaticTimeTableMakingTools
                                 if (temp_TimeTableStations[j].stationName.Contains("终到"))
                                 {
                                     stopColumn = temp_TimeTableStations[j].stationColumn;
+                                    _stopColumn = stopColumn;
                                     hasGotStopColumn = true;
                                 }
                                 if (hasGotStopColumn)
@@ -2063,40 +2056,40 @@ namespace AutomaticTimeTableMakingTools
                             {//上行
                                 _trains = table.upTrains;
                             }
-                            //判重-默认都是2给1
-                            Train firstTrain = new Train();
-                            Train secondTrain = new Train();
+                            //去重-2给1
+                            Train _firstTrain = new Train();
+                            Train _secondTrain = new Train();
                             for (int t = 0; t < _trains.Count; t++)
                             {
-                                firstTrain = _trains[t];
+                                _firstTrain = _trains[t];
                                 for (int tt = t + 1; tt < _trains.Count; tt++)
                                 {
-                                    secondTrain = _trains[tt];
-                                    if (firstTrain.secondTrainNum != null && secondTrain.secondTrainNum != null)
+                                    _secondTrain = _trains[tt];
+                                    if (_firstTrain.secondTrainNum != null && _secondTrain.secondTrainNum != null)
                                     {
-                                        if (firstTrain.firstTrainNum.Equals(secondTrain.firstTrainNum) ||
-                                            firstTrain.firstTrainNum.Equals(secondTrain.secondTrainNum) ||
-                                            firstTrain.secondTrainNum.Equals(secondTrain.firstTrainNum) ||
-                                            firstTrain.secondTrainNum.Equals(secondTrain.secondTrainNum))
+                                        if (_firstTrain.firstTrainNum.Equals(_secondTrain.firstTrainNum) ||
+                                            _firstTrain.firstTrainNum.Equals(_secondTrain.secondTrainNum) ||
+                                            _firstTrain.secondTrainNum.Equals(_secondTrain.firstTrainNum) ||
+                                            _firstTrain.secondTrainNum.Equals(_secondTrain.secondTrainNum))
                                         {//如果车号相同的话，2的元素给1，把2删除
-                                            foreach (Station _s in secondTrain.newStations)
+                                            foreach (Station _s in _secondTrain.newStations)
                                             {
                                                 Station _ss = new Station();
                                                 _ss = _s;
-                                                firstTrain.newStations.Add(_ss);
+                                                _firstTrain.newStations.Add(_ss);
                                             }
                                             _trains.RemoveAt(tt);
                                         }
                                     }
                                     else
                                     {//如果两个车相同，要么都有两个车号，要么都有一个车号
-                                        if (firstTrain.firstTrainNum.Equals(secondTrain.firstTrainNum))
+                                        if (_firstTrain.firstTrainNum.Equals(_secondTrain.firstTrainNum))
                                         {
-                                            foreach (Station _s in secondTrain.newStations)
+                                            foreach (Station _s in _secondTrain.newStations)
                                             {
                                                 Station _ss = new Station();
                                                 _ss = _s;
-                                                firstTrain.newStations.Add(_ss);
+                                                _firstTrain.newStations.Add(_ss);
                                             }
                                             _trains.RemoveAt(tt);
                                         }
@@ -2104,7 +2097,7 @@ namespace AutomaticTimeTableMakingTools
                                 }
                             }
 
-                                for (int j = stationRowNumber + 2; j <= sheet.LastRowNum; j++)
+                            for (int j = stationRowNumber + 2; j <= sheet.LastRowNum; j++)
                                 {//往下找，直接跳过一行
                                     IRow newRow;
                                     if (sheet.GetRow(j) == null)
@@ -2304,12 +2297,20 @@ namespace AutomaticTimeTableMakingTools
                         }
                         /*重新修改文件指定单元格样式*/
                         //空的加斜杠
+
                         for(int i = 0; i <= sheet.LastRowNum; i++)
                         {
                         if(sheet.GetRow(i) != null)
                         {
                             IRow _row = sheet.GetRow(i);
-                            for (int j = 0; j < _row.LastCellNum; j++)
+                            if(_row.GetCell(1) == null)
+                            {
+                                continue;
+                            }else if(_row.GetCell(1).ToString().Trim().Length == 0)
+                            {
+                                continue;
+                            }
+                            for (int j = 0; j < _stopColumn; j++)
                             {
                                 if(_row.GetCell(j) == null)
                                 {
