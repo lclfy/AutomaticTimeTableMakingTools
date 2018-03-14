@@ -1,5 +1,6 @@
 ﻿using AutomaticTimeTableMakingTools.Models;
 using NPOI.HSSF.UserModel;
+using NPOI.HSSF.Util;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System;
@@ -1341,8 +1342,21 @@ namespace AutomaticTimeTableMakingTools
                                     if (compared_Train.mainStation.stationTrackNum != null)
                                     {
                                         if (compared_Train.mainStation.stationTrackNum.Equals(train.mainStation.stationTrackNum))
-                                        {//找到了同股道列车
-                                            tmp_Train = compared_Train;
+                                        {//找到了同股道列车-该列车必须终到
+                                            if (compared_Train.mainStation.stationType != 2)
+                                            {
+                                                continue;
+                                            }
+                                            int trainTime = 0;
+                                            int compared_TrainTime = 0;
+                                            //比较-需要找的车的发车时间，和其他车的到达时间，且发车时间需要大于到达时间
+                                            int.TryParse(train.mainStation.startedTime, out trainTime);
+                                            int.TryParse(compared_Train.mainStation.stoppedTime.Replace(":", "").Trim(), out compared_TrainTime);
+
+                                            if (trainTime > compared_TrainTime)
+                                            {//新找到的时间和原时间差小于之前找到的时间差，用新的替换老的
+                                                tmp_Train = compared_Train;
+                                            }
                                         }
                                     }
                                 }
@@ -1351,7 +1365,11 @@ namespace AutomaticTimeTableMakingTools
                                     if (compared_Train.mainStation.stationTrackNum != null)
                                     {
                                         if (compared_Train.mainStation.stationTrackNum.Equals(train.mainStation.stationTrackNum))
-                                        {//找到了同股道列车
+                                        {//找到了同股道列车-此车必须是终到车
+                                            if(compared_Train.mainStation.stationType != 2)
+                                            {
+                                                continue;
+                                            }
                                             int trainTime = 0;
                                             int compared_TrainTime = 0;
                                             int tmp_TrainTime = 0;
@@ -1359,7 +1377,8 @@ namespace AutomaticTimeTableMakingTools
                                             int.TryParse(train.mainStation.startedTime, out trainTime);
                                             int.TryParse(compared_Train.mainStation.stoppedTime.Replace(":", "").Trim(), out compared_TrainTime);
                                             int.TryParse(tmp_Train.mainStation.stoppedTime.Replace(":", "").Trim(), out tmp_TrainTime);
-                                            if (Math.Abs(trainTime - compared_TrainTime) < Math.Abs(trainTime - tmp_TrainTime) &&
+                                            
+                                            if ((Math.Abs(trainTime - compared_TrainTime) < Math.Abs(trainTime - tmp_TrainTime)) &&
                                                 trainTime > compared_TrainTime)
                                             {//新找到的时间和原时间差小于之前找到的时间差，用新的替换老的
                                                 tmp_Train = compared_Train;
@@ -1412,8 +1431,21 @@ namespace AutomaticTimeTableMakingTools
                                     if (compared_Train.mainStation.stationTrackNum != null)
                                     {
                                         if (compared_Train.mainStation.stationTrackNum.Equals(train.mainStation.stationTrackNum))
-                                        {//找到了同股道列车
-                                            tmp_Train = compared_Train;
+                                        {//找到了同股道列车-此车必须是始发车
+                                            if (compared_Train.mainStation.stationType != 1)
+                                            {
+                                                continue;
+                                            }
+                                            int trainTime = 0;
+                                            int compared_TrainTime = 0;
+                                            //比较-需要找的车的到达时间，和其他车的发车时间，而且发车时间需要大于到达时间
+                                            int.TryParse(train.mainStation.stoppedTime.Replace(":", "").Trim(), out trainTime);
+                                            int.TryParse(compared_Train.mainStation.startedTime, out compared_TrainTime);
+
+                                            if (compared_TrainTime > trainTime)
+                                            {//新找到的时间和原时间差小于之前找到的时间差，用新的替换老的
+                                                tmp_Train = compared_Train;
+                                            }
                                         }
                                     }
                                 }
@@ -1422,7 +1454,11 @@ namespace AutomaticTimeTableMakingTools
                                     if (compared_Train.mainStation.stationTrackNum != null)
                                     {
                                         if (compared_Train.mainStation.stationTrackNum.Equals(train.mainStation.stationTrackNum))
-                                        {//找到了同股道列车
+                                        {//找到了同股道列车-此车必须是始发车
+                                            if (compared_Train.mainStation.stationType != 1)
+                                            {
+                                                continue;
+                                            }
                                             int trainTime = 0;
                                             int compared_TrainTime = 0;
                                             int tmp_TrainTime = 0;
@@ -1430,7 +1466,8 @@ namespace AutomaticTimeTableMakingTools
                                             int.TryParse(train.mainStation.stoppedTime.Replace(":", "").Trim(), out trainTime);
                                             int.TryParse(compared_Train.mainStation.startedTime, out compared_TrainTime);
                                             int.TryParse(tmp_Train.mainStation.startedTime, out tmp_TrainTime);
-                                            if (Math.Abs(trainTime - compared_TrainTime) < Math.Abs(trainTime - tmp_TrainTime) &&
+                                            
+                                            if ((Math.Abs(trainTime - compared_TrainTime) < Math.Abs(trainTime - tmp_TrainTime)) &&
                                                 compared_TrainTime > trainTime)
                                             {//新找到的时间和原时间差小于之前找到的时间差，用新的替换老的
                                                 tmp_Train = compared_Train;
@@ -1925,8 +1962,17 @@ namespace AutomaticTimeTableMakingTools
                 standard.BorderTop = NPOI.SS.UserModel.BorderStyle.Thin;
                 standard.BorderBottom = NPOI.SS.UserModel.BorderStyle.Thin;
 
+                //斜杠格式
+                ICellStyle empty = workbook.CreateCellStyle();
+                empty.BorderDiagonalLineStyle = NPOI.SS.UserModel.BorderStyle.Thin;
+                empty.BorderDiagonal = BorderDiagonal.Forward;
+                empty.BorderTop = NPOI.SS.UserModel.BorderStyle.Thin;
+                empty.BorderLeft = NPOI.SS.UserModel.BorderStyle.Thin;
+                empty.BorderRight = NPOI.SS.UserModel.BorderStyle.Thin;
+                empty.BorderBottom = NPOI.SS.UserModel.BorderStyle.Thin;
+                empty.TopBorderColor = HSSFColor.Black.Index;
+
                 ISheet sheet = workbook.GetSheetAt(0);  //获取工作表  
-                IRow row;
                 //获取和工作表对应的时刻表
                 TimeTable table = new TimeTable();
                 foreach(TimeTable tb in allTimeTables)
@@ -2110,8 +2156,8 @@ namespace AutomaticTimeTableMakingTools
                                     }
                                     newRow.GetCell(targetColumn).CellStyle = standard;
                                     newRow.GetCell(targetColumn).SetCellValue(_train.startStation);
-                                    //找终点
-                                    if (findColumn(temp_TimeTableStations, "终到", i) != null)
+                                //找终点
+                                if (findColumn(temp_TimeTableStations, "终到", i) != null)
                                     {
                                         currentStation = findColumn(temp_TimeTableStations, "终到", i);
                                         targetColumn = currentStation.stationColumn;
@@ -2164,7 +2210,7 @@ namespace AutomaticTimeTableMakingTools
                                             {
                                                 newRow.GetCell(currentStation.trackNumColumn).SetCellValue(_train.mainStation.stationTrackNum);
                                             }
-                                            
+
                                         }
                                     }
                                     if (currentStation.stoppedTimeColumn != 0 && !skipThisTrain)
@@ -2187,7 +2233,7 @@ namespace AutomaticTimeTableMakingTools
                                                 }
                                                 newRow.GetCell(currentStation.stoppedTimeColumn).CellStyle = standard;
                                                 newRow.GetCell(currentStation.stoppedTimeColumn).SetCellValue(stoppedTime);
-                                            }
+                                        }
                                         }
                                         if (currentStation.startedTimeColumn != 0 && !skipThisTrain)
                                         {
@@ -2199,7 +2245,7 @@ namespace AutomaticTimeTableMakingTools
                                                 }
                                                 newRow.GetCell(currentStation.startedTimeColumn).CellStyle = standard;
                                                 newRow.GetCell(currentStation.startedTimeColumn).SetCellValue(addColonToStartTime(_train.mainStation.startedTime));
-                                            }
+                                        }
                                         }
                                         
 
@@ -2223,7 +2269,7 @@ namespace AutomaticTimeTableMakingTools
                                                     }
                                                     newRow.GetCell(currentStation.stoppedTimeColumn).CellStyle = standard;
                                                     newRow.GetCell(currentStation.stoppedTimeColumn).SetCellValue(_station.stoppedTime);
-                                                }
+                                            }
                                             }
                                             if (currentStation.startedTimeColumn != 0)
                                             {
@@ -2234,8 +2280,8 @@ namespace AutomaticTimeTableMakingTools
                                                         newRow.CreateCell(currentStation.startedTimeColumn);
                                                     }
                                                     newRow.GetCell(currentStation.startedTimeColumn).CellStyle = standard;
-                                                    newRow.GetCell(currentStation.startedTimeColumn).SetCellValue(_station.startedTime);
-                                                }
+                                                    newRow.GetCell(currentStation.startedTimeColumn).SetCellValue(addColonToStartTime(_station.startedTime));
+                                            }
                                             }
                                             if (currentStation.trackNumColumn != 0)
                                             {
@@ -2247,7 +2293,7 @@ namespace AutomaticTimeTableMakingTools
                                                     }
                                                     newRow.GetCell(currentStation.trackNumColumn).CellStyle = standard;
                                                     newRow.GetCell(currentStation.trackNumColumn).SetCellValue(_station.stationTrackNum);
-                                                }
+                                            }
                                             }
 
                                         }
@@ -2257,6 +2303,29 @@ namespace AutomaticTimeTableMakingTools
                             }
                         }
                         /*重新修改文件指定单元格样式*/
+                        //空的加斜杠
+                        for(int i = 0; i <= sheet.LastRowNum; i++)
+                        {
+                        if(sheet.GetRow(i) != null)
+                        {
+                            IRow _row = sheet.GetRow(i);
+                            for (int j = 0; j < _row.LastCellNum; j++)
+                            {
+                                if(_row.GetCell(j) == null)
+                                {
+                                    _row.CreateCell(j);
+                                }
+                                if (!_row.GetCell(j).IsMergedCell)
+                                {
+                                    if (_row.GetCell(j).ToString().Trim().Length == 0)
+                                    {
+                                        _row.GetCell(j).CellStyle = empty;
+                                    }
+                                }
+                            }
+                        }
+
+                        }
                         try
                         {
                             FileStream file = new FileStream(table.fileName + "-处理后.xls", FileMode.Create);
