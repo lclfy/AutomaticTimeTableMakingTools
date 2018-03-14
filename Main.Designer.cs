@@ -148,11 +148,11 @@
             // 
             this.label4.AutoSize = true;
             this.label4.ForeColor = System.Drawing.Color.Red;
-            this.label4.Location = new System.Drawing.Point(351, 470);
+            this.label4.Location = new System.Drawing.Point(252, 470);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(221, 12);
+            this.label4.Size = new System.Drawing.Size(437, 12);
             this.label4.TabIndex = 18;
-            this.label4.Text = "中间站接续列车需要自行添加，注意查漏";
+            this.label4.Text = "中间站接续列车需要自行添加，时刻表中列车运行顺序可能错误，注意查漏及对比";
             // 
             // label5
             // 

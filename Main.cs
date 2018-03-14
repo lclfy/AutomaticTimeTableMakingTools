@@ -1749,13 +1749,13 @@ namespace AutomaticTimeTableMakingTools
                                             {
                                                 if (_train.upOrDown)
                                                 {//下行
-                                                    XLTime = XLTime - 20;
+                                                    XLTime = XLTime + 20;
                                                     _mainStation.stoppedTime = "排序用时刻";
                                                     _mainStation.startedTime = XLTime.ToString();
                                                 }
                                                 else
                                                 {
-                                                    XLTime = XLTime + 20;
+                                                    XLTime = XLTime - 20;
                                                     _mainStation.stoppedTime = "排序用时刻";
                                                     _mainStation.startedTime = XLTime.ToString();
                                                 }
