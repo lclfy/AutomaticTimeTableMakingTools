@@ -1559,11 +1559,11 @@ namespace AutomaticTimeTableMakingTools
 
             foreach(Train _train in trainsWithMainStation)
             {
-                matchTrainAndTimeTable(_train);
+                matchTrainAndTimeTable(_train , trainsWithoutMainStation);
             }
             foreach(Train _train in trainsWithoutMainStation)
             {
-                matchTrainAndTimeTable(_train);
+                matchTrainAndTimeTable(_train , trainsWithoutMainStation);
             }
             //此时应当已经将列车分为时刻表-上下行保存了，下面进行排序。
             foreach (TimeTable _table in allTimeTables)
@@ -1588,8 +1588,9 @@ namespace AutomaticTimeTableMakingTools
         }
 
         //将列车和对应时刻匹配
-        private bool matchTrainAndTimeTable(Train _train)
+        private bool matchTrainAndTimeTable(Train _train, List<Train> trainsWithoutMainStation)
         {//把给定的车次匹配一个时刻表
+            //第二个参数主要是为了处理二郎庙-疏解区列车
             bool hasGotTimeTable = false;
             foreach(Station _s in _train.newStations)
             {//有曹古寺就不用进行下面的操作了，一份时刻表存一个
@@ -1658,17 +1659,6 @@ namespace AutomaticTimeTableMakingTools
                             }
                             if (!hasTheSameOne)
                             {//其他时刻表内没有这个车站，则可以
-                                if(_train.secondTrainNum != null)
-                                {
-                                    if(_train.secondTrainNum.Length != 0)
-                                    {
-                                        if(_train.firstTrainNum.Contains("D296")||
-                                            _train.secondTrainNum.Contains("D296"))
-                                        {
-                                            int ij = 1;
-                                        }
-                                    }
-                                }
                                 if (_train.mainStation == null)
                                 {
                                     //此时列车为二郎庙->疏解区->郑州站的列车，
@@ -1677,8 +1667,44 @@ namespace AutomaticTimeTableMakingTools
                                     bool hasGotOne = false;
                                     foreach(Station _station in _train.newStations)
                                     {
-                                        if (_station.stationName.Contains("二郎庙"))
+                                        if (_station.stationName.Contains("许昌东"))
                                         {//此时如果为下行，则京广场时间=二郎庙时间-3 上行则+3
+                                            //先找到经过圃田西的同名车次，添加进来-否则京广场会出现上下行两趟该车次
+                                                foreach(Train _secondTrain in trainsWithoutMainStation)
+                                                {
+                                                    if(_train.upOrDown != _secondTrain.upOrDown)
+                                                    {
+                                                    if (_train.secondTrainNum != null && _secondTrain.secondTrainNum != null)
+                                                    {
+                                                        if (_train.firstTrainNum.Equals(_secondTrain.firstTrainNum) ||
+                                                            _train.firstTrainNum.Equals(_secondTrain.secondTrainNum) ||
+                                                            _train.secondTrainNum.Equals(_secondTrain.firstTrainNum) ||
+                                                            _train.secondTrainNum.Equals(_secondTrain.secondTrainNum))
+                                                        {//如果车号相同的话，2的元素给1，把2删除
+                                                            foreach (Station _s in _secondTrain.newStations)
+                                                            {
+                                                                Station _ss = new Station();
+                                                                _ss = _s;
+                                                                _train.newStations.Add(_ss);
+                                                            }
+                                                        }
+                                                    }
+                                                    else
+                                                    {//如果两个车相同，要么都有两个车号，要么都有一个车号
+                                                        if (_train.firstTrainNum.Equals(_secondTrain.firstTrainNum))
+                                                        {
+                                                            foreach (Station _s in _secondTrain.newStations)
+                                                            {
+                                                                Station _ss = new Station();
+                                                                _ss = _s;
+                                                                _train.newStations.Add(_ss);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                }
+                                           
                                             Station _mainStation = new Station();
                                             _mainStation.stationName = table.Title;
                                             int JGTime = 0;
