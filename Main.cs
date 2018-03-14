@@ -2,6 +2,7 @@
 using NPOI.HSSF.UserModel;
 using NPOI.HSSF.Util;
 using NPOI.SS.UserModel;
+using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
@@ -592,6 +593,10 @@ namespace AutomaticTimeTableMakingTools
                                                         !stopStation.Contains("终到")&&
                                                         continueFindingStop)
                                                     {
+                                                        if (stopStation.Trim().Contains("动车所"))
+                                                        {
+                                                            stopStation = "动车所";
+                                                        }
                                                         tempTrain.stopStation = stopStation.Trim();
                                                         continueFindingStop = false;
                                                     }
@@ -603,6 +608,10 @@ namespace AutomaticTimeTableMakingTools
                                                         !startStation.Contains("始发")&&
                                                         continueFindingStart)
                                                     {
+                                                        if (startStation.Trim().Contains("动车所"))
+                                                        {
+                                                            startStation = "动车所";
+                                                        }
                                                         tempTrain.startStation = startStation.Trim();
                                                         continueFindingStart = false;
                                                     }
@@ -851,6 +860,13 @@ namespace AutomaticTimeTableMakingTools
                                                         if (_tempStartingTime.Length != 0&&
                                                             _tempStoppedTime.Length != 0)
                                                         {//已经获取到一组数据，此时应当添加模型
+                                                            if (_track.Equals("XXV"))
+                                                            {
+                                                                _track = "25";
+                                                            }else if (_track.Equals("XXVI"))
+                                                            {
+                                                                _track = "26";
+                                                            }
                                                             _tempStation.stoppedTime = _tempStoppedTime;
                                                             _tempStation.startedTime = _tempStartingTime;
                                                             _tempStation.stationType = _stationType;
@@ -886,6 +902,14 @@ namespace AutomaticTimeTableMakingTools
                                                         else if(_tempStartingTime.Length != 0&&
                                                             _tempStoppedTime.Length == 0)
                                                         {//只有发时，没有停时，此站为始发站
+                                                            if (_track.Equals("XXV"))
+                                                            {
+                                                                _track = "25";
+                                                            }
+                                                            else if (_track.Equals("XXVI"))
+                                                            {
+                                                                _track = "26";
+                                                            }
                                                             _tempStation.startedTime = _tempStartingTime;
                                                             _tempStation.stoppedTime = "始发";
                                                             _tempStation.stationType = 1;
@@ -1119,12 +1143,20 @@ namespace AutomaticTimeTableMakingTools
                                                         if (_tempStartingTime.Length != 0 &&
                                                             _tempStoppedTime.Length != 0)
                                                         {//已经获取到一组数据，此时应当添加模型
-
-                                                            _tempStation.stoppedTime = _tempStoppedTime;
+                                                                if (_track.Equals("XXV"))
+                                                                {
+                                                                    _track = "25";
+                                                                }
+                                                                else if (_track.Equals("XXVI"))
+                                                                {
+                                                                    _track = "26";
+                                                                }
+                                                                _tempStation.stoppedTime = _tempStoppedTime;
                                                             _tempStation.startedTime = _tempStartingTime;
                                                             _tempStation.stationType = _stationType;
                                                             _tempStation.stationName = _stationName;
                                                             _tempStation.stationTrackNum = _track;
+
                                                                 if (_stationName.Contains("郑州东") &&
                                                                      !_stationName.Contains("动车所")&&
                                                                      !_stationName.Contains("疏解区"))
@@ -1155,7 +1187,15 @@ namespace AutomaticTimeTableMakingTools
                                                         else if (_tempStartingTime.Length != 0 &&
                                                             _tempStoppedTime.Length == 0)
                                                         {//只有发时，没有停时，此站为始发站
-                                                            _tempStation.startedTime = _tempStartingTime;
+                                                                if (_track.Equals("XXV"))
+                                                                {
+                                                                    _track = "25";
+                                                                }
+                                                                else if (_track.Equals("XXVI"))
+                                                                {
+                                                                    _track = "26";
+                                                                }
+                                                                _tempStation.startedTime = _tempStartingTime;
                                                             _tempStation.stoppedTime = "始发";
                                                             _tempStation.stationType = 1;
                                                             _tempStation.stationName = _stationName;
@@ -1618,6 +1658,17 @@ namespace AutomaticTimeTableMakingTools
                             }
                             if (!hasTheSameOne)
                             {//其他时刻表内没有这个车站，则可以
+                                if(_train.secondTrainNum != null)
+                                {
+                                    if(_train.secondTrainNum.Length != 0)
+                                    {
+                                        if(_train.firstTrainNum.Contains("D296")||
+                                            _train.secondTrainNum.Contains("D296"))
+                                        {
+                                            int ij = 1;
+                                        }
+                                    }
+                                }
                                 if (_train.mainStation == null)
                                 {
                                     //此时列车为二郎庙->疏解区->郑州站的列车，
@@ -1653,14 +1704,14 @@ namespace AutomaticTimeTableMakingTools
                                             _train.mainStation = _mainStation;
                                             hasGotOne = true;
                                         }
-                                        else
-                                        {
-                                            return false;
-                                        }
                                         if (hasGotOne)
                                         {
                                             break;
                                         }
+                                    }
+                                    if (!hasGotOne)
+                                    {
+                                        return false;
                                     }
 
                                 }
@@ -1954,15 +2005,71 @@ namespace AutomaticTimeTableMakingTools
             {
                 //用来给表格填斜杠用的
                 int _stopColumn = 0;
-                //格式
+                //格式-标准
                 ICellStyle standard = workbook.CreateCellStyle();
-                standard.FillForegroundColor = NPOI.HSSF.Util.HSSFColor.White.Index;
+                standard.FillForegroundColor = HSSFColor.White.Index;
                 standard.FillPattern = FillPattern.SolidForeground;
-                standard.FillBackgroundColor = NPOI.HSSF.Util.HSSFColor.White.Index;
+                standard.FillBackgroundColor = HSSFColor.White.Index;
                 standard.BorderLeft = NPOI.SS.UserModel.BorderStyle.Thin;
                 standard.BorderRight = NPOI.SS.UserModel.BorderStyle.Thin;
                 standard.BorderTop = NPOI.SS.UserModel.BorderStyle.Thin;
                 standard.BorderBottom = NPOI.SS.UserModel.BorderStyle.Thin;
+                standard.Alignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
+                HSSFFont standardFont = (HSSFFont)workbook.CreateFont();
+                standardFont.FontName = "Times New Roman";//字体  
+                standardFont.FontHeightInPoints = 15;//字号  
+                standard.SetFont(standardFont);
+
+                //格式-续开
+                ICellStyle continuedTrainCell = workbook.CreateCellStyle();
+                continuedTrainCell.FillForegroundColor = HSSFColor.White.Index;
+                continuedTrainCell.FillPattern = FillPattern.SolidForeground;
+                continuedTrainCell.FillBackgroundColor = HSSFColor.White.Index;
+                continuedTrainCell.BorderLeft = NPOI.SS.UserModel.BorderStyle.Thin;
+                continuedTrainCell.BorderRight = NPOI.SS.UserModel.BorderStyle.Thin;
+                continuedTrainCell.BorderTop = NPOI.SS.UserModel.BorderStyle.Thin;
+                continuedTrainCell.BorderBottom = NPOI.SS.UserModel.BorderStyle.Thin;
+                continuedTrainCell.Alignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
+                HSSFFont font9B = (HSSFFont)workbook.CreateFont();
+                font9B.FontName = "黑体";//字体  
+                font9B.FontHeightInPoints = 9;//字号  
+                continuedTrainCell.SetFont(font9B);
+                /*
+                font.Underline = NPOI.SS.UserModel.FontUnderlineType.Double;//下划线  
+                font.IsStrikeout = true;//删除线  
+                font.IsItalic = true;//斜体  
+                font.IsBold = true;//加粗  
+                */
+
+                //格式-起点终点
+                ICellStyle startAndStop = workbook.CreateCellStyle();
+                startAndStop.FillForegroundColor = HSSFColor.White.Index;
+                startAndStop.FillPattern = FillPattern.SolidForeground;
+                startAndStop.FillBackgroundColor = HSSFColor.White.Index;
+                startAndStop.BorderLeft = NPOI.SS.UserModel.BorderStyle.Thin;
+                startAndStop.BorderRight = NPOI.SS.UserModel.BorderStyle.Thin;
+                startAndStop.BorderTop = NPOI.SS.UserModel.BorderStyle.Thin;
+                startAndStop.BorderBottom = NPOI.SS.UserModel.BorderStyle.Thin;
+                startAndStop.Alignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
+                HSSFFont startAndStopFont = (HSSFFont)workbook.CreateFont();
+                startAndStopFont.FontName = "宋体";//字体  
+                startAndStopFont.FontHeightInPoints = 13;//字号  
+                startAndStop.SetFont(startAndStopFont);
+
+                //格式-车次
+                ICellStyle trainNumberCell = workbook.CreateCellStyle();
+                trainNumberCell.FillForegroundColor = HSSFColor.White.Index;
+                trainNumberCell.FillPattern = FillPattern.SolidForeground;
+                trainNumberCell.FillBackgroundColor = HSSFColor.White.Index;
+                trainNumberCell.BorderLeft = NPOI.SS.UserModel.BorderStyle.Thin;
+                trainNumberCell.BorderRight = NPOI.SS.UserModel.BorderStyle.Thin;
+                trainNumberCell.BorderTop = NPOI.SS.UserModel.BorderStyle.Thin;
+                trainNumberCell.BorderBottom = NPOI.SS.UserModel.BorderStyle.Thin;
+                trainNumberCell.Alignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
+                HSSFFont trainNumberFont = (HSSFFont)workbook.CreateFont();
+                trainNumberFont.FontName = "Times New Roman";//字体  
+                trainNumberFont.FontHeightInPoints = 14;//字号  
+                trainNumberCell.SetFont(trainNumberFont);
 
                 //斜杠格式
                 ICellStyle empty = workbook.CreateCellStyle();
@@ -1972,6 +2079,7 @@ namespace AutomaticTimeTableMakingTools
                 empty.BorderLeft = NPOI.SS.UserModel.BorderStyle.Thin;
                 empty.BorderRight = NPOI.SS.UserModel.BorderStyle.Thin;
                 empty.BorderBottom = NPOI.SS.UserModel.BorderStyle.Thin;
+                empty.Alignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
                 empty.TopBorderColor = HSSFColor.Black.Index;
 
                 ISheet sheet = workbook.GetSheetAt(0);  //获取工作表  
@@ -2134,7 +2242,7 @@ namespace AutomaticTimeTableMakingTools
                                     {
                                         newRow.CreateCell(targetColumn);
                                     }
-                                    newRow.GetCell(targetColumn).CellStyle = standard;
+                                    newRow.GetCell(targetColumn).CellStyle = trainNumberCell;
                                     newRow.GetCell(targetColumn).SetCellValue(trainNumber);
                                     //找起点
                                     if (findColumn(temp_TimeTableStations, "始发", i) != null)
@@ -2147,7 +2255,7 @@ namespace AutomaticTimeTableMakingTools
                                     {
                                         newRow.CreateCell(targetColumn);
                                     }
-                                    newRow.GetCell(targetColumn).CellStyle = standard;
+                                    newRow.GetCell(targetColumn).CellStyle = startAndStop;
                                     newRow.GetCell(targetColumn).SetCellValue(_train.startStation);
                                 //找终点
                                 if (findColumn(temp_TimeTableStations, "终到", i) != null)
@@ -2160,7 +2268,7 @@ namespace AutomaticTimeTableMakingTools
                                     {
                                         newRow.CreateCell(targetColumn);
                                     }
-                                    newRow.GetCell(targetColumn).CellStyle = standard;
+                                    newRow.GetCell(targetColumn).CellStyle = startAndStop;
                                     newRow.GetCell(targetColumn).SetCellValue(_train.stopStation);
                                 //主站
                                 //徐兰场进京广场的车特殊显示
@@ -2197,7 +2305,20 @@ namespace AutomaticTimeTableMakingTools
                                             newRow.GetCell(currentStation.trackNumColumn).CellStyle = standard;
                                             if (skipThisTrain)
                                             {
-                                                newRow.GetCell(currentStation.trackNumColumn).SetCellValue("通过");
+                                                //合并左中右三个格子，左格子写上“通过”
+                                                //CellRangeAddress四个参数为：起始行，结束行，起始列，结束列
+                                                sheet.AddMergedRegion(new CellRangeAddress(j, j, currentStation.stoppedTimeColumn, currentStation.startedTimeColumn));
+                                                if(newRow.GetCell(currentStation.stoppedTimeColumn) == null)
+                                                {
+                                                    newRow.CreateCell(currentStation.stoppedTimeColumn);
+                                                }
+                                                if (newRow.GetCell(currentStation.startedTimeColumn) == null)
+                                                {
+                                                    newRow.CreateCell(currentStation.startedTimeColumn);
+                                                }
+                                                newRow.GetCell(currentStation.stoppedTimeColumn).SetCellValue("通过");
+                                                newRow.GetCell(currentStation.stoppedTimeColumn).CellStyle = standard;
+                                                newRow.GetCell(currentStation.startedTimeColumn).CellStyle = standard;
                                             }
                                             else
                                             {
@@ -2224,7 +2345,15 @@ namespace AutomaticTimeTableMakingTools
                                                 {
                                                     newRow.CreateCell(currentStation.stoppedTimeColumn);
                                                 }
+                                            if (_train.mainStation.stoppedTime.Contains("改"))
+                                            {
+                                                newRow.GetCell(currentStation.stoppedTimeColumn).CellStyle = continuedTrainCell;
+                                            }
+                                            else
+                                            {
                                                 newRow.GetCell(currentStation.stoppedTimeColumn).CellStyle = standard;
+                                            }
+                                                
                                                 newRow.GetCell(currentStation.stoppedTimeColumn).SetCellValue(stoppedTime);
                                         }
                                         }
@@ -2236,7 +2365,14 @@ namespace AutomaticTimeTableMakingTools
                                                 {
                                                     newRow.CreateCell(currentStation.startedTimeColumn);
                                                 }
+                                            if (_train.mainStation.startedTime.Contains("续开"))
+                                            {
+                                                newRow.GetCell(currentStation.startedTimeColumn).CellStyle = continuedTrainCell;
+                                            }
+                                            else
+                                            {
                                                 newRow.GetCell(currentStation.startedTimeColumn).CellStyle = standard;
+                                            }
                                                 newRow.GetCell(currentStation.startedTimeColumn).SetCellValue(addColonToStartTime(_train.mainStation.startedTime));
                                         }
                                         }
@@ -2260,20 +2396,31 @@ namespace AutomaticTimeTableMakingTools
                                                     {
                                                         newRow.CreateCell(currentStation.stoppedTimeColumn);
                                                     }
-                                                    newRow.GetCell(currentStation.stoppedTimeColumn).CellStyle = standard;
-                                                    newRow.GetCell(currentStation.stoppedTimeColumn).SetCellValue(_station.stoppedTime);
+                                                if (stoppedTime.Contains("通过") &&
+                                                    currentStation.startedTimeColumn == 0)
+                                                {//如果是只显示一个时间(只显示“到达”)，但是又要都显示上时间的话（不能显示“通过”）
+                                                    stoppedTime = _station.startedTime;
+                                                }
+                                                newRow.GetCell(currentStation.stoppedTimeColumn).CellStyle = standard;
+                                                    newRow.GetCell(currentStation.stoppedTimeColumn).SetCellValue(stoppedTime);
                                             }
                                             }
                                             if (currentStation.startedTimeColumn != 0)
                                             {
                                                 if (_station.startedTime != null)
                                                 {
+                                                    string startedTime = _station.startedTime;
                                                     if (newRow.GetCell(currentStation.startedTimeColumn) == null)
                                                     {
                                                         newRow.CreateCell(currentStation.startedTimeColumn);
                                                     }
-                                                    newRow.GetCell(currentStation.startedTimeColumn).CellStyle = standard;
-                                                    newRow.GetCell(currentStation.startedTimeColumn).SetCellValue(addColonToStartTime(_station.startedTime));
+                                                if (startedTime.Contains("终到") &&
+                                                    currentStation.stoppedTimeColumn == 0)
+                                                {//如果是只显示一个时间(只显示“发出”)，但是又要都显示上时间的话（不能显示“终到”）
+                                                    startedTime = _station.stoppedTime;
+                                                }
+                                                newRow.GetCell(currentStation.startedTimeColumn).CellStyle = standard;
+                                                    newRow.GetCell(currentStation.startedTimeColumn).SetCellValue(addColonToStartTime(startedTime));
                                             }
                                             }
                                             if (currentStation.trackNumColumn != 0)
