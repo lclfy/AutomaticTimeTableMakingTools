@@ -16,6 +16,34 @@ using System.Windows.Forms;
 
 namespace AutomaticTimeTableMakingTools
 {
+    /*
+    Readme
+    基本逻辑：
+    1、 导入文件，取成工作簿 - ImportFiles
+    2、从时刻表表头中获取车站 - GetStationsFromCurrentTables
+        2.1 寻找唯一车站名
+        2.2 寻找车站所在的列，到达股道发出列，车站所在的行，标题所在的行，存入allTimeTables
+    3、从新时刻表中获取列车 - GetTrainsFromNewTimeTables
+        3.1  先找出标题所在列，始发站所在行，终到站所在行，车次所在行
+        3.2  找某一行车的上下行 - 找两个时间，判断先后顺序
+        3.3  根据每一行车的上下行数据，判断是自顶向下搜索时间 还是自底向上搜索时间，同时通过限制条件寻找时间对应的车站和股道
+        3.4  用于分割双车次的方法 - splitTrainNum
+    4、数据处理 - analyizeTrainData
+        4.1  将车次分为有主站/无主站（郑州东徐兰场/京广场）的，部分无主站的可从其他同车次数据中获取主站
+        4.2  寻找接续列车 - 同股道相隔时间最短列车，满足到-发顺序条件。
+        4.3  分为京广上行-京广下行-徐兰上行-徐兰下行，分别存取allTimeTables - matchTrainAndTimeTable
+        4.3.1 通过寻找每一张时刻表->和该车次的每一个车站尝试做站名匹配->匹配到之后，开始从其他时刻表内寻找有没有相同站名，如果都没有，则说明该车次属于该时刻表。
+        4.3.2 对于不经过郑州东站的列车，分为二郎庙方向和开封北方向分别处理（新乡东方向和圃田西方向也可以处理），通过假设该车次经过郑州东（加减相应区间运行时间），来进行排序。
+        4.3.3 对于动车所<->郑州东的列车，无法通过站名唯一方式找到对应场次，可通过寻找接续列车所在场进行匹配时刻表。
+        4.4  根据每个场上下行共四张表分别进行时间排序 - 排序方式为将列车发车时间冒号去除，变为数字进行对比，若该车次终到，则用到达时间参与对比，不经过郑州东的列车用假定时间进行对比。
+    5、读写表头 - createTimeTableFile
+        5.1  创建相应格式
+        5.2  将时刻表与excel对应，并找出excel内的标题行列，车站行，车站列（到达股道发出），车站上下行，
+        5.3  从allTimeTables找出对应数据，填写，填写时将双车次列车填写至上/下行对应正确的车次号。
+
+        对于表头，中间站数量可自定义增加/减少，表头应具有该站相应状态（到达-股道-发出-通过），即可打印正确的数据
+        表头的（上行）（下行）决定将打印哪部分列车，表头的“京广” “徐兰”决定打印哪张时刻表（修改可能会造成意外结果）
+    */
     public partial class Main : Form
     {
         List<IWorkbook> NewTimeTablesWorkbooks;
@@ -1364,8 +1392,6 @@ namespace AutomaticTimeTableMakingTools
                     }
                 }
             }
-            //排序
-            //trainsWithMainStation.Sort();
 
             //寻找接续列车
             foreach (Train train in trainsWithMainStation)
