@@ -38,8 +38,9 @@ namespace AutomaticTimeTableMakingTools
         4.4  根据每个场上下行共四张表分别进行时间排序 - 排序方式为将列车发车时间冒号去除，变为数字进行对比，若该车次终到，则用到达时间参与对比，不经过郑州东的列车用假定时间进行对比。
     5、读写表头 - createTimeTableFile
         5.1  创建相应格式
-        5.2  将时刻表与excel对应，并找出excel内的标题行列，车站行，车站列（到达股道发出），车站上下行，
+        5.2  将时刻表与excel对应，并找出excel内的标题行列，车站行，车站列（到达股道发出），车站的上下行属性，
         5.3  从allTimeTables找出对应数据，填写，填写时将双车次列车填写至上/下行对应正确的车次号。
+        5.4  根据不同数据给予不同格式，未填写数据的位置加斜杠
 
         对于表头，中间站数量可自定义增加/减少，表头应具有该站相应状态（到达-股道-发出-通过），即可打印正确的数据
         表头的（上行）（下行）决定将打印哪部分列车，表头的“京广” “徐兰”决定打印哪张时刻表（修改可能会造成意外结果）
@@ -1650,10 +1651,6 @@ namespace AutomaticTimeTableMakingTools
                 //这张时刻表有，其他时刻表没有-不匹配主站
                 foreach(Station station in _train.newStations)
                 {
-                    if (_train.firstTrainNum.Equals("G6611"))
-                    {
-                        int ij = 1;
-                    }
                     bool hasTheSameOne = false;
                     for (int i = 0; i < table.stations.Length; i++)
                     {
@@ -1699,8 +1696,28 @@ namespace AutomaticTimeTableMakingTools
                                     {
                                         if (_station.stationName.Contains("许昌东"))
                                         {//此时如果为下行，则京广场时间=二郎庙时间-3 上行则+3
-                                            //先找到经过圃田西的同名车次，添加进来-否则京广场会出现上下行两趟该车次
-                                                foreach(Train _secondTrain in trainsWithoutMainStation)
+                                         //先找到经过圃田西的同名车次，添加进来-否则京广场会出现上下行两趟该车次
+                                         //找二郎庙时间
+                                            bool hasGotTime = false;
+                                            int JGTime = 0;
+                                            foreach (Station _s in _train.newStations)
+                                            {
+                                                if (_s.stationName.Contains("二郎庙"))
+                                                {
+                                                    int.TryParse(_s.startedTime.Replace(":", ""), out JGTime);
+                                                    hasGotTime = true;
+                                                }
+                                                if (hasGotTime)
+                                                {
+                                                    break;
+                                                }
+                                            }
+                                            if (_train.firstTrainNum.Equals("D295") ||
+                                               _train.firstTrainNum.Equals("D298"))
+                                            {
+                                                int ij = 1;
+                                            }
+                                            foreach (Train _secondTrain in trainsWithoutMainStation)
                                                 {
                                                     if(_train.upOrDown != _secondTrain.upOrDown)
                                                     {
@@ -1737,12 +1754,15 @@ namespace AutomaticTimeTableMakingTools
                                            
                                             Station _mainStation = new Station();
                                             _mainStation.stationName = table.Title;
-                                            int JGTime = 0;
-                                            int.TryParse(_station.startedTime.Replace(":", ""), out JGTime);
                                             if (_train.upOrDown)
                                             {//下行
                                                 if(JGTime != 0)
                                                 {
+                                                    //使用60分进制加减
+                                                    if((JGTime % 100) < 3)
+                                                    {//比如是1119，那么就是 (11-1)x100 = 1000 + (60 - ( 22 - (19)) = 1057
+                                                        JGTime = (((JGTime / 100) - 1) * 100) + (60 - (3 - (JGTime % 100)));
+                                                    }
                                                     JGTime = JGTime - 3;
                                                     _mainStation.stoppedTime = "排序用时刻";
                                                     _mainStation.startedTime = JGTime.ToString();
@@ -1752,6 +1772,12 @@ namespace AutomaticTimeTableMakingTools
                                             {
                                                 if (JGTime != 0)
                                                 {
+                                                    //使用60分进制加减
+                                                    if ((60 - (JGTime % 100)) < 3)
+                                                    {//比如是1150，那么就是 (11-1)x100 = 1200 + (22 - 10) = 1212
+
+                                                        JGTime = (((JGTime / 100) + 1) * 100) + (3 - (JGTime % 100));
+                                                    }
                                                     JGTime = JGTime + 3;
                                                     _mainStation.stoppedTime = "排序用时刻";
                                                     _mainStation.startedTime = JGTime.ToString();
@@ -1775,12 +1801,23 @@ namespace AutomaticTimeTableMakingTools
                                             {
                                                 if (_train.upOrDown)
                                                 {//下行
+                                                 //使用60分进制加减
+                                                    if ((XLTime % 100) < 20)
+                                                    {
+                                                        XLTime = (((XLTime / 100) - 1) * 100) + (60 - (20 - (XLTime % 100)));
+                                                    }
                                                     XLTime = XLTime + 20;
                                                     _mainStation.stoppedTime = "排序用时刻";
                                                     _mainStation.startedTime = XLTime.ToString();
                                                 }
                                                 else
                                                 {
+                                                    //使用60分进制加减
+                                                    if ((60 - (XLTime % 100)) < 22)
+                                                    {//比如是1150，那么就是 (11-1)x100 = 1200 + (22 - 10) = 1212
+
+                                                        XLTime = (((XLTime / 100) + 1) * 100) + (20 - (XLTime % 100));
+                                                    }
                                                     XLTime = XLTime - 20;
                                                     _mainStation.stoppedTime = "排序用时刻";
                                                     _mainStation.startedTime = XLTime.ToString();
