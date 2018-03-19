@@ -1647,11 +1647,33 @@ namespace AutomaticTimeTableMakingTools
                             {
                                 if(_station.stationName.Equals("郑州西") && table.Title.Equals("徐兰"))
                                 {
-                                    skipThis = true;
+                                    int ZZWestStartTime = 0;
+                                    int.TryParse(_station.startedTime.Replace(":", "").Trim(), out ZZWestStartTime);
+                                    foreach (Train _tt in trainsWithMainStation)
+                                    {
+                                        if (_train.firstTrainNum.Equals(_tt.firstTrainNum))
+                                        {
+                                            foreach (Station _ss in _tt.newStations)
+                                            {
+                                                if (_ss.stationName.Contains("许昌东") ||
+                                           _ss.stationName.Contains("新乡东"))
+                                                {//满足条件
+                                                    int JGStationStartTime = 0;
+                                                    int.TryParse(_ss.startedTime.Replace(":", "").Trim(), out JGStationStartTime);
+                                                    if (JGStationStartTime > ZZWestStartTime && JGStationStartTime != 0 && ZZWestStartTime != 0)
+                                                    {
+                                                        skipThis = true;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }  
                                 }
                             }
                             if (skipThis)
+                            {
                                 continue;
+                            }
                             if (_train.upOrDown)
                             {
                                 table.downTrains.Add(_train);
@@ -1982,6 +2004,7 @@ namespace AutomaticTimeTableMakingTools
                                     table.upTrains.Add(_train);
                                 }
                                 //删除徐兰场内显示的西->京广场列车
+                                
                                 if (table.Title.Equals("徐兰"))
                                 {
                                     if (_trackNum <= 16)
@@ -1995,13 +2018,20 @@ namespace AutomaticTimeTableMakingTools
                                                     if (_ss.stationName.Contains("许昌东") ||
                                                     _ss.stationName.Contains("新乡东"))
                                                     {//满足条件
-                                                        if (_train.upOrDown)
+                                                        int JGStationStartTime = 0;
+                                                        int mainStationStartTime = 0;
+                                                        int.TryParse(_ss.startedTime.Replace(":","").Trim(),out JGStationStartTime);
+                                                        int.TryParse(_train.mainStation.startedTime, out mainStationStartTime);
+                                                        if(JGStationStartTime > mainStationStartTime)
                                                         {
-                                                            table.downTrains.Remove(_train);
-                                                        }
-                                                        else
-                                                        {
-                                                            table.upTrains.Remove(_train);
+                                                            if (_train.upOrDown)
+                                                            {
+                                                                table.downTrains.Remove(_train);
+                                                            }
+                                                            else
+                                                            {
+                                                                table.upTrains.Remove(_train);
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -2015,13 +2045,20 @@ namespace AutomaticTimeTableMakingTools
                                                         if (_ss.stationName.Contains("许昌东") ||
                                                         _ss.stationName.Contains("新乡东"))
                                                         {//满足条件
-                                                            if (_train.upOrDown)
+                                                            int JGStationStartTime = 0;
+                                                            int mainStationStartTime = 0;
+                                                            int.TryParse(_ss.startedTime.Replace(":", "").Trim(), out JGStationStartTime);
+                                                            int.TryParse(_train.mainStation.startedTime, out mainStationStartTime);
+                                                            if (JGStationStartTime > mainStationStartTime)
                                                             {
-                                                                table.downTrains.Remove(_train);
-                                                            }
-                                                            else
-                                                            {
-                                                                table.upTrains.Remove(_train);
+                                                                if (_train.upOrDown)
+                                                                {
+                                                                    table.downTrains.Remove(_train);
+                                                                }
+                                                                else
+                                                                {
+                                                                    table.upTrains.Remove(_train);
+                                                                }
                                                             }
                                                         }
                                                     }
@@ -2030,6 +2067,7 @@ namespace AutomaticTimeTableMakingTools
                                         }
                                     }
                                 }
+                                
                                 hasGotTimeTable = true;
                             }
                         }
