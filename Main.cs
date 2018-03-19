@@ -290,13 +290,19 @@ namespace AutomaticTimeTableMakingTools
                                         if(stopStartRow.GetCell(j) != null)
                                         {
                                             cellInfo = stopStartRow.GetCell(j).ToString().Trim();
-                                            if (cellInfo.Contains("通过")||cellInfo.Contains("发出"))
+
+                                                if (cellInfo.Contains("通过") || cellInfo.Contains("发出"))
+                                                {
+                                                    _tempStation.startedTimeColumn = j;
+                                                }
+                                                if (cellInfo.Contains("到达"))
+                                                {
+                                                    _tempStation.stoppedTimeColumn = j;
+                                                }
+                                            if (cellInfo.Contains("股道"))
                                             {
-                                                _tempStation.startedTimeColumn = j;
+                                                _tempStation.trackNumColumn = j;
                                             }
-                                            if (cellInfo.Contains("到达"))
-                                            {
-                                                _tempStation.stoppedTimeColumn = j;
                                                 //此时往右，再往上，看看get到的是不是自己，是的话就看是股道还是发出，直到不是的再退出循环
                                                 for(int k = j + 1; k < stopStartRow.LastCellNum; k++)
                                                 {//
@@ -335,7 +341,6 @@ namespace AutomaticTimeTableMakingTools
                                                         }
                                                     }
                                                 }
-                                            }
 
                                         }
                                         else
@@ -2758,7 +2763,11 @@ namespace AutomaticTimeTableMakingTools
 
                                     }
 
-                                    //根据每个站进行匹配填写
+                                //根据每个站进行匹配填写
+                                if (_train.firstTrainNum.Equals("C2830"))
+                                {
+                                    int ii = 0;
+                                }
                                     foreach (Station _station in _train.newStations)
                                     {
                                         if (findColumn(temp_TimeTableStations, table.Title, i) != null)
