@@ -148,11 +148,11 @@
             // 
             this.label4.AutoSize = true;
             this.label4.ForeColor = System.Drawing.Color.Red;
-            this.label4.Location = new System.Drawing.Point(252, 470);
+            this.label4.Location = new System.Drawing.Point(155, 470);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(437, 12);
+            this.label4.Size = new System.Drawing.Size(605, 12);
             this.label4.TabIndex = 18;
-            this.label4.Text = "中间站接续列车需要自行添加，时刻表中列车运行顺序可能错误，注意查漏及对比";
+            this.label4.Text = "中间站接续列车需要自行添加，时刻表中列车运行顺序可能错误，徐兰场西向北列车未完全删除，注意查漏及对比";
             // 
             // label5
             // 
@@ -172,17 +172,17 @@
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(89, 12);
             this.label6.TabIndex = 20;
-            this.label6.Text = "Build 20180314";
+            this.label6.Text = "Build 20180320";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
             this.label7.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.label7.Location = new System.Drawing.Point(155, 488);
+            this.label7.Location = new System.Drawing.Point(152, 488);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(611, 12);
+            this.label7.Size = new System.Drawing.Size(623, 12);
             this.label7.TabIndex = 21;
-            this.label7.Text = "目前只支持京广徐兰场，但可以在表头添加/删除中间站/线路所，注意表头格式（关键字：到达-股道-发出-通过）";
+            this.label7.Text = "目前仅支持郑州东车站三场，可以在表头添加/删除中间站/线路所，注意表头格式（关键字：到达-股道-发出-通过）";
             // 
             // Main
             // 
