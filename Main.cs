@@ -1701,6 +1701,10 @@ namespace AutomaticTimeTableMakingTools
             foreach(TimeTable table in allTimeTables)
             {//用车次里的车站名去包时刻表里的，包上了之后，把时刻表里的车次模型加上
                 //这张时刻表有，其他时刻表没有-不匹配主站
+                if (_train.firstTrainNum.Equals("G1850"))
+                {
+                    int iii = 0;
+                }
                 foreach(Station station in _train.newStations)
                 {
                     bool hasTheSameOne = false;
@@ -2011,7 +2015,7 @@ namespace AutomaticTimeTableMakingTools
                                 }
                                 //删除徐兰场内显示的西->京广场列车
                                 
-                                if (table.Title.Equals("徐兰"))
+                                if (table.Title.Equals("徐兰") && !_train.upOrDown)
                                 {
                                     if (_trackNum <= 16)
                                     {
