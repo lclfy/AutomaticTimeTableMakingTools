@@ -564,8 +564,14 @@ namespace AutomaticTimeTableMakingTools
                                     {
                                         continueSearch = true;
                                     }
-                                    }
+
                                 }
+                                }
+                            //如果找到了一个小时一个分钟 必须重找
+                            if (_continueCounter_hour == 1 && _continueCounter_minute == 1)
+                            {
+                                continueSearch = true;
+                            }
                             if (!continueSearch)
                             {
                                 break;
@@ -1807,7 +1813,7 @@ namespace AutomaticTimeTableMakingTools
                                     foreach(Station _station in _train.newStations)
                                     {
 
-                                        if (_station.stationName.Contains("二郎庙"))
+                                        if (_station.stationName.Contains("许昌东"))
                                         {//此时如果为下行，则京广场时间=二郎庙时间-4 上行则+4
                                          //先找到经过圃田西的同名车次，添加进来-否则京广场会出现上下行两趟该车次
                                          //找二郎庙时间
@@ -1825,8 +1831,9 @@ namespace AutomaticTimeTableMakingTools
                                                     break;
                                                 }
                                             }
-                                            foreach (Train _secondTrain in trainsWithoutMainStation)
+                                            for(int ij = 0;ij< trainsWithoutMainStation.Count;ij++)
                                                 {
+                                                Train _secondTrain = trainsWithoutMainStation[ij];
                                                     if(_train.upOrDown != _secondTrain.upOrDown)
                                                     {
                                                     if (_train.secondTrainNum != null && _train.secondTrainNum.Length!=0 && _secondTrain.secondTrainNum != null && _secondTrain.secondTrainNum.Length!=0)
@@ -2672,9 +2679,10 @@ namespace AutomaticTimeTableMakingTools
                                                 _firstTrain.newStations.Add(_ss);
                                             }
                                             _trains.RemoveAt(tt);
+                                            tt--;
                                         }
                                     }
-                                    else
+                                    else if(_firstTrain.secondTrainNum.Length == 0 && _secondTrain.secondTrainNum.Length == 0)
                                     {//如果两个车相同，要么都有两个车号，要么都有一个车号
                                         if (_firstTrain.firstTrainNum.Equals(_secondTrain.firstTrainNum))
                                         {
@@ -2685,6 +2693,7 @@ namespace AutomaticTimeTableMakingTools
                                                 _firstTrain.newStations.Add(_ss);
                                             }
                                             _trains.RemoveAt(tt);
+                                            tt--;
                                         }
                                     }
                                 }
