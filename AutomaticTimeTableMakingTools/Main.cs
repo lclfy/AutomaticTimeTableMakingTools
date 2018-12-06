@@ -1403,7 +1403,11 @@ namespace AutomaticTimeTableMakingTools
             //找主站
             foreach (Train train in trains)
             {
-                    if (train.mainStation != null && train.mainStation.stationName.Length != 0)
+                if (train.firstTrainNum.Equals("C2993") || train.firstTrainNum.Equals("C2992"))
+                {
+                    int la = 0;
+                }
+                if (train.mainStation != null && train.mainStation.stationName.Length != 0)
                 {
                     trainsWithMainStation.Add(train);
                 }
@@ -1696,7 +1700,7 @@ namespace AutomaticTimeTableMakingTools
          //第三个参数主要是为了处理二郎庙-疏解区列车
             bool hasGotTimeTable = false;
             foreach(Station _s in _train.newStations)
-            {//有曹古寺就不用进行下面的操作了，一份时刻表存一个
+            {//有曹古寺，京广只要1-16 徐兰全要
                 if (_s.stationName.Contains("曹古寺"))
                 {
                     foreach (TimeTable table in allTimeTables)
@@ -1704,6 +1708,16 @@ namespace AutomaticTimeTableMakingTools
                         if (table.Title.Contains("城际"))
                         {
                             continue;
+                        }
+                        //京广场西进徐兰场列车删除
+                        if (table.Title.Contains("京广")&&_train.mainStation != null && _train.mainStation.stationName.Length != 0)
+                        {
+                            int track = -1;
+                            int.TryParse(_train.mainStation.stationTrackNum, out track);
+                            if (track > 16)
+                            {
+                                continue;
+                            }
                         }
                         if (_train.mainStation != null && _train.mainStation.stationName.Length != 0)
                         {
@@ -1727,7 +1741,7 @@ namespace AutomaticTimeTableMakingTools
                                                 {//满足条件
                                                     int JGStationStartTime = 0;
                                                     int.TryParse(_ss.startedTime.Replace(":", "").Trim(), out JGStationStartTime);
-                                                    if (JGStationStartTime > ZZWestStartTime && JGStationStartTime != 0 && ZZWestStartTime != 0)
+                                                    if (JGStationStartTime < ZZWestStartTime && JGStationStartTime != 0 && ZZWestStartTime != 0)
                                                     {
                                                         skipThis = true;
                                                     }
@@ -2118,7 +2132,7 @@ namespace AutomaticTimeTableMakingTools
                                     table.upTrains.Add(_train);
                                 }
                                 //删除徐兰场内显示的西->京广场列车
-                                
+                                /*
                                 if (table.Title.Equals("徐兰") && !_train.upOrDown)
                                 {
                                     if (_trackNum <= 16)
@@ -2181,7 +2195,7 @@ namespace AutomaticTimeTableMakingTools
                                         }
                                     }
                                 }
-                                
+                                */
                                 hasGotTimeTable = true;
                             }
                         }
@@ -2723,14 +2737,44 @@ namespace AutomaticTimeTableMakingTools
                                     int stoppedColumn = 0;
                                     int startedColumn = 0;
                                     int trackNumColumn = 0;
+                                //如果这张时刻表里面没有一个车站能对应上这趟车的任何一个车站，则不能显示在这张表内
+                                /*
+                                bool skip = true;
+                                foreach (Station _temps in _train.newStations)
+                                {
+                                    if(_temps.stationName.Length == 0)
+                                    {
+                                        continue;
+                                    }
+                                    for(int m = 0; m < table.stations.Length; m++)
+                                    {
+                                        if(table.stations[m].Length == 0)
+                                        {
+                                            continue;
+                                        }
+                                        if(_temps.stationName.Contains(table.stations[m]) ||
+                                            (table.stations[m]).Contains(_temps.stationName))
+                                        {
+                                            skip = false;
+                                            break;
+                                        }
+                                    }
+                                    if(skip == false)
+                                    {
+                                        break;
+                                    }
+                                }
+                                if (skip)
+                                {
+                                    break;
+                                }
+                                */
                                     Stations_TimeTable currentStation = new Stations_TimeTable();
                                     if (findColumn(temp_TimeTableStations, "车次", i) != null)
                                     {
                                         currentStation = findColumn(temp_TimeTableStations, "车次", i);
                                         targetColumn = currentStation.stationColumn;
                                     }
-
-
                                     //填写车次
                                     if (newRow.GetCell(targetColumn) == null)
                                     {
