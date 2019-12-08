@@ -209,6 +209,14 @@ namespace AutomaticTimeTableMakingTools
                                     _timeTable.Title = "徐兰";
                                     _timeTable.titleRow = i;
                                 }
+                                else if ((titleName.Contains("郑万") &&
+                                    titleName.Contains("上行")) ||
+                                    (titleName.Contains("郑万") &&
+                                    titleName.Contains("下行")))
+                                {
+                                    _timeTable.Title = "郑万";
+                                    _timeTable.titleRow = i;
+                                }
                                 else if ((titleName.Contains("城际") &&
                                    titleName.Contains("上行")) ||
                                    (titleName.Contains("城际") &&
@@ -280,7 +288,7 @@ namespace AutomaticTimeTableMakingTools
                                     }
                                     else
                                     {
-                                        MessageBox.Show("选定的列车时刻表表头不具有规定格式：“京广…时刻表（上行）”或“徐兰…时刻表（上行）”", "提示", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                        MessageBox.Show("选定的列车时刻表表头不具有规定格式：“京广…时刻表（上行）”或“徐兰…时刻表（上行）”或“郑万…时刻表（上行）”", "提示", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                                         return false;
                                     }
                                     //此时依然不能直接添加，需要寻找到达-股道-发出所在列
@@ -367,7 +375,7 @@ namespace AutomaticTimeTableMakingTools
                 }
                 if (_timeTable.Title == null || _timeTable.Title.Length == 0)
                 {
-                    MessageBox.Show("选定的列车时刻表表头不具有规定格式：“京广…时刻表（上行）”或“徐兰…时刻表（上行）”", "提示", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show("选定的列车时刻表表头不具有规定格式：“京广…时刻表（上行）”或“徐兰…时刻表（上行）”或“郑万…时刻表（上行）”", "提示", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     return false;
                 }
                 allStations = allStations.Remove(0,1);
@@ -1661,7 +1669,7 @@ namespace AutomaticTimeTableMakingTools
             //按照输入的时刻表表头中找到的车站，进行车次分类
             //需要注意的是，不经过主站的列车也要加入分类，分类后进行排序。
             //双向匹配，当列车经过的某一个车站在某一张时刻表内有，且在另一张时刻表没有时，才可判断属于哪一张时刻表。
-            //经过曹古寺的列车，两张表都要有
+            //经过曹古寺的列车，两张表都要有，！但郑万表内没有
 
             foreach(Train _train in trainsWithMainStation)
             {
@@ -1705,7 +1713,7 @@ namespace AutomaticTimeTableMakingTools
                 {
                     foreach (TimeTable table in allTimeTables)
                     {
-                        if (table.Title.Contains("城际"))
+                        if (table.Title.Contains("城际") || table.Title.Contains("郑万"))
                         {
                             continue;
                         }
