@@ -1719,6 +1719,13 @@ namespace AutomaticTimeTableMakingTools
                     for (int i = 0; i < table.stations.Length; i++)
                     {
                         if (hasTheSameOne)
+<<<<<<< HEAD
+=======
+                        {
+                            break;
+                        }
+                        if (station.stationName.Trim().Equals("郑州"))
+>>>>>>> parent of 6864806... 1206B2
                         {
                             break;
                         }
@@ -1759,6 +1766,7 @@ namespace AutomaticTimeTableMakingTools
                                     bool hasGotOne = false;
                                     foreach(Station _station in _train.newStations)
                                     {
+
                                         if (_station.stationName.Contains("许昌东"))
                                         {//此时如果为下行，则京广场时间=二郎庙时间-4 上行则+4
                                          //先找到经过圃田西的同名车次，添加进来-否则京广场会出现上下行两趟该车次
