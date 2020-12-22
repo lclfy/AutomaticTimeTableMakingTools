@@ -19,19 +19,6 @@ namespace AutomaticTimeTableMakingTools.Models
         public List<Station> newStations { get; set; }
         public List<TrainFile> shownInFiles { get; set; }
 
-        public Train()
-        {
-            firstTrainNum = "";
-            secondTrainNum = "";
-            startStation = "";
-            stopStation = "";
-            stopStation = "";
-            upOrDown = false;
-            mainStation = new Station();
-            newStations = new List<Station>();
-            shownInFiles = new List<TrainFile>();
-    }
-
         //重写的CompareTo方法，根据Id排序
         public int CompareTo(Train otherTrain)
         {

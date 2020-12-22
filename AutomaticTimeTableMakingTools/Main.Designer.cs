@@ -181,6 +181,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
+<<<<<<< HEAD:AutomaticTimeTableMakingTools/Main.Designer.cs
             this.label6.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label6.ForeColor = System.Drawing.Color.OrangeRed;
             this.label6.Location = new System.Drawing.Point(1227, 884);
@@ -189,6 +190,14 @@
             this.label6.Size = new System.Drawing.Size(208, 28);
             this.label6.TabIndex = 20;
             this.label6.Text = "Build 20191208";
+=======
+            this.label6.ForeColor = System.Drawing.SystemColors.Highlight;
+            this.label6.Location = new System.Drawing.Point(669, 505);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(89, 12);
+            this.label6.TabIndex = 20;
+            this.label6.Text = "Build 20180320";
+>>>>>>> parent of 707657c... 181205:Main.Designer.cs
             // 
             // label7
             // 
@@ -205,7 +214,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+<<<<<<< HEAD:AutomaticTimeTableMakingTools/Main.Designer.cs
             this.ClientSize = new System.Drawing.Size(1714, 934);
+=======
+            this.ClientSize = new System.Drawing.Size(935, 526);
+>>>>>>> parent of 707657c... 181205:Main.Designer.cs
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
@@ -224,7 +237,6 @@
             this.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.Name = "Main";
             this.Text = "Form1";
-            this.Load += new System.EventHandler(this.Main_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

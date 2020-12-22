@@ -17,15 +17,5 @@ namespace AutomaticTimeTableMakingTools.Models
         public int trackNumColumn { get; set; }
         public int startedTimeColumn { get; set; }
 
-        public Stations_TimeTable()
-        {
-            stationName = "";
-            upOrDown = false;
-            stationColumn = 0;
-            stoppedTimeColumn = 0;
-            trackNumColumn = 0;
-            startedTimeColumn = 0;
-
-        }
     }
 }

@@ -12,14 +12,5 @@ namespace AutomaticTimeTableMakingTools.Models
         public string stoppedTime { get; set; }
         public string startedTime { get; set; }
         public string stationTrackNum { get; set; }
-
-        public Station()
-        {
-            stationName = "";
-            stationType = 0;
-            stoppedTime = "";
-            startedTime = "";
-            stationTrackNum = "";
-        }
     }
 }

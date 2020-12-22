@@ -22,17 +22,5 @@ namespace AutomaticTimeTableMakingTools.Models
         //上下行分开
         public List<Train> upTrains = new List<Train>();
         public List<Train> downTrains = new List<Train>();
-
-        public TimeTable()
-        {
-            Title = "";
-            titleRow = 0;
-            stationRow = 0;
-            currentStations = new List<Stations_TimeTable>();
-            fileName = "";
-            timeTablePlace = 0;
-            upTrains = new List<Train>();
-            downTrains = new List<Train>();
-        }
     }
 }
