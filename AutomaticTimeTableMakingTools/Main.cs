@@ -1834,7 +1834,7 @@ namespace AutomaticTimeTableMakingTools
                             continue;
                         }
                         //徐兰场本身的车跳过
-                        if (table.Title.Contains("徐兰") && _train.mainStation != null && _train.mainStation.stationName.Length != 0)
+                        if (table.Title.Contains("京广") && _train.mainStation != null && _train.mainStation.stationName.Length != 0)
                         {
                             int track = -1;
                             int.TryParse(_train.mainStation.stationTrackNum, out track);
