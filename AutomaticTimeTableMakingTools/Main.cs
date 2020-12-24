@@ -1876,8 +1876,8 @@ namespace AutomaticTimeTableMakingTools
                         {
                             continue;
                         }
-                        if ((station.stationName.Trim().Contains(table.stations[i].ToString().Trim())||
-                            table.stations[i].ToString().Trim().Contains(station.stationName.Trim()))&&!station.stationName.Trim().Equals("郑州"))
+                        if ((station.stationName.Trim().Contains(table.stations[i].ToString().Trim()) ||
+                            table.stations[i].ToString().Trim().Contains(station.stationName.Trim())) && !station.stationName.Trim().Equals("郑州"))
                         {//这张时刻表有
                             foreach (TimeTable _comparedTable in allTimeTables)
                             {//其他时刻表没有
@@ -1893,7 +1893,7 @@ namespace AutomaticTimeTableMakingTools
                                     }
                                     for (int j = 0; j < _comparedTable.stations.Length; j++)
                                     {
-                                        if(station.stationName.Trim().Contains(_comparedTable.stations[j].ToString().Trim()) ||
+                                        if (station.stationName.Trim().Contains(_comparedTable.stations[j].ToString().Trim()) ||
                             _comparedTable.stations[j].ToString().Trim().Contains(station.stationName.Trim()) && !station.stationName.Trim().Equals("郑州"))
                                         {//另一张时刻表有了，不能算
                                             hasTheSameOne = true;
@@ -1911,6 +1911,10 @@ namespace AutomaticTimeTableMakingTools
                                     //为了能够在时刻表上进行排序，按照二郎庙->京广场的平均时间4分钟来定，假设该列车进了京广场。
                                     //如果车次中不包含“二郎庙线路所”，则该车次为华山北->郑州列车，不计入统计。
                                     bool hasGotOne = false;
+                                    if (_train.firstTrainNum.Equals("G96"))
+                                    {
+                                        int test = 0;
+                                    }
                                     foreach (Station _station in _train.newStations)
                                     {
                                         if (_station.stationName.Contains("许昌东"))
@@ -2126,11 +2130,15 @@ namespace AutomaticTimeTableMakingTools
                                                 break;
                                             }
                                         }
+                                        if (hasGotOne)
+                                        {
+                                            break;
+                                        }
+                                    }
                                         if (!hasGotOne)
                                         {
                                             return false;
                                         }
-                                    }
                                 }
                                 else
                                 {
@@ -2145,29 +2153,29 @@ namespace AutomaticTimeTableMakingTools
                                         {
                                             if (_s.stationName.Contains("鸿宝"))
                                             {
-                                                if(_train.secondTrainNum != null && _train.secondTrainNum.Length != 0)
+                                                if (_train.secondTrainNum != null && _train.secondTrainNum.Length != 0)
                                                 {//必须换向
-                                                    if(_train.secondTrainNum.Length == 0)
+                                                    if (_train.secondTrainNum.Length == 0)
                                                     {
-                                                        break;  
+                                                        break;
                                                     }
                                                 }
                                                 else
                                                 {
                                                     break;
                                                 }
-                                                foreach(Train _t in trainsWithMainStation)
+                                                foreach (Train _t in trainsWithMainStation)
                                                 {
-                                                    if(_t.firstTrainNum.Equals(_train.firstTrainNum)||
+                                                    if (_t.firstTrainNum.Equals(_train.firstTrainNum) ||
                                                         _t.firstTrainNum.Equals(_train.secondTrainNum))
                                                     {//车次相等
                                                         //并且经过新乡东
-                                                        foreach(Station _ss in _t.newStations)
+                                                        foreach (Station _ss in _t.newStations)
                                                         {
                                                             if (_ss.stationName.Contains("新乡东"))
                                                             {//满足条件
                                                                 _train.mainStation.stationName = "京广/徐兰";
-                                                                foreach(TimeTable _tb in allTimeTables)
+                                                                foreach (TimeTable _tb in allTimeTables)
                                                                 {
                                                                     if (_tb.Title.Equals("京广"))
                                                                     {
@@ -2189,7 +2197,7 @@ namespace AutomaticTimeTableMakingTools
                                         }
                                         _train.mainStation.stationName = table.Title;
                                     }
-                                    else if(trackNum > 20 && trackNum <= 32)
+                                    else if (trackNum > 20 && trackNum <= 32)
                                     {//新乡东->开封北 在徐兰场显示一份
                                         foreach (Station _s in _train.newStations)
                                         {
@@ -2318,6 +2326,10 @@ namespace AutomaticTimeTableMakingTools
                                 }
                                 */
                                 hasGotTimeTable = true;
+                            }
+                            if (hasGotTimeTable)
+                            {
+                                break;
                             }
                         }
                         if (hasGotTimeTable)
