@@ -76,3 +76,19 @@ D:\GitHub\AutomaticTimeTableMakingTools - 车间版\AutomaticTimeTableMakingTool
 \\Mac\Home\Documents\GitHub\AutomaticTimeTableMakingTools - 车间版\AutomaticTimeTableMakingTools\obj\Debug\AutomaticTimeTableMakingTools.csproj.CopyComplete
 \\Mac\Home\Documents\GitHub\AutomaticTimeTableMakingTools - 车间版\AutomaticTimeTableMakingTools\obj\Debug\AutomaticTimeTableMakingTools.exe
 \\Mac\Home\Documents\GitHub\AutomaticTimeTableMakingTools - 车间版\AutomaticTimeTableMakingTools\obj\Debug\AutomaticTimeTableMakingTools.pdb
+\\Mac\Home\Documents\GitHub\Distributed_AutomaticTimeTableMakingTools\AutomaticTimeTableMakingTools\bin\Debug\AutomaticTimeTableMakingTools.exe
+\\Mac\Home\Documents\GitHub\Distributed_AutomaticTimeTableMakingTools\AutomaticTimeTableMakingTools\bin\Debug\AutomaticTimeTableMakingTools.pdb
+\\Mac\Home\Documents\GitHub\Distributed_AutomaticTimeTableMakingTools\AutomaticTimeTableMakingTools\bin\Debug\ICSharpCode.SharpZipLib.dll
+\\Mac\Home\Documents\GitHub\Distributed_AutomaticTimeTableMakingTools\AutomaticTimeTableMakingTools\bin\Debug\NPOI.dll
+\\Mac\Home\Documents\GitHub\Distributed_AutomaticTimeTableMakingTools\AutomaticTimeTableMakingTools\bin\Debug\NPOI.OOXML.dll
+\\Mac\Home\Documents\GitHub\Distributed_AutomaticTimeTableMakingTools\AutomaticTimeTableMakingTools\bin\Debug\NPOI.OpenXml4Net.dll
+\\Mac\Home\Documents\GitHub\Distributed_AutomaticTimeTableMakingTools\AutomaticTimeTableMakingTools\bin\Debug\NPOI.OpenXmlFormats.dll
+\\Mac\Home\Documents\GitHub\Distributed_AutomaticTimeTableMakingTools\AutomaticTimeTableMakingTools\bin\Debug\NPOI.xml
+\\Mac\Home\Documents\GitHub\Distributed_AutomaticTimeTableMakingTools\AutomaticTimeTableMakingTools\obj\Debug\AutomaticTimeTableMakingTools.csprojAssemblyReference.cache
+\\Mac\Home\Documents\GitHub\Distributed_AutomaticTimeTableMakingTools\AutomaticTimeTableMakingTools\obj\Debug\AutomaticTimeTableMakingTools.Main.resources
+\\Mac\Home\Documents\GitHub\Distributed_AutomaticTimeTableMakingTools\AutomaticTimeTableMakingTools\obj\Debug\AutomaticTimeTableMakingTools.Properties.Resources.resources
+\\Mac\Home\Documents\GitHub\Distributed_AutomaticTimeTableMakingTools\AutomaticTimeTableMakingTools\obj\Debug\AutomaticTimeTableMakingTools.csproj.GenerateResource.cache
+\\Mac\Home\Documents\GitHub\Distributed_AutomaticTimeTableMakingTools\AutomaticTimeTableMakingTools\obj\Debug\AutomaticTimeTableMakingTools.csproj.CoreCompileInputs.cache
+\\Mac\Home\Documents\GitHub\Distributed_AutomaticTimeTableMakingTools\AutomaticTimeTableMakingTools\obj\Debug\AutomaticTimeTableMakingTools.csproj.CopyComplete
+\\Mac\Home\Documents\GitHub\Distributed_AutomaticTimeTableMakingTools\AutomaticTimeTableMakingTools\obj\Debug\AutomaticTimeTableMakingTools.exe
+\\Mac\Home\Documents\GitHub\Distributed_AutomaticTimeTableMakingTools\AutomaticTimeTableMakingTools\obj\Debug\AutomaticTimeTableMakingTools.pdb
