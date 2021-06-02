@@ -13,7 +13,7 @@ namespace AutomaticTimeTableMakingTools.Models
         public int titleRow { get; set; }
         //时刻表中判断车站所在行的行位置
         public int stationRow { get; set; }
-        //将现有时刻表中的车次提取出来，并且记录列位置
+        //将现有时刻表中的车站提取出来，并且记录列位置
         public List<Stations_TimeTable> currentStations = new List<Stations_TimeTable>();
         //后期寻找时刻表文件，在此处保存文件名
         public string fileName { get; set; }
