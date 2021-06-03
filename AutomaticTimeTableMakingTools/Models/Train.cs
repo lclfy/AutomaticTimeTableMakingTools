@@ -19,18 +19,51 @@ namespace AutomaticTimeTableMakingTools.Models
         public List<Station> newStations { get; set; }
         public List<TrainFile> shownInFiles { get; set; }
 
-        public Train()
+        public Train(string _firstTrainNum = "", string _secondTrainNum = "", string _startStation = "",
+                                string _stopStation = "", bool _upOrDown = false, Station _mainStation = null, List<Station> _newStations = null, List<TrainFile> _shownInFiles = null)
         {
-            firstTrainNum = "";
-            secondTrainNum = "";
-            startStation = "";
-            stopStation = "";
-            stopStation = "";
-            upOrDown = false;
-            mainStation = new Station();
-            newStations = new List<Station>();
-            shownInFiles = new List<TrainFile>();
+            firstTrainNum = _firstTrainNum;
+            secondTrainNum = _secondTrainNum;
+            startStation = _startStation;
+            stopStation = _stopStation;
+            upOrDown = _upOrDown;
+
+            if(_mainStation == null)
+            {
+                mainStation = new Station();
+            }
+            else
+            {
+                mainStation = _mainStation;
+            }
+
+            if (_newStations == null)
+            {
+                newStations = new List<Station>();
+            }
+            else
+            {
+                newStations = _newStations;
+            }
+
+            if (_shownInFiles == null)
+            {
+                shownInFiles = new List<TrainFile>();
+            }
+            else
+            {
+                shownInFiles = _shownInFiles;
+            }
+
     }
+
+        public Train Clone()
+        {
+            Train _t = new Train(this.firstTrainNum, this.secondTrainNum, this.startStation, this.stopStation, this.upOrDown, this.mainStation, this.newStations, this.shownInFiles);
+            return _t;
+        }
+
+
 
         //重写的CompareTo方法，根据Id排序
         public int CompareTo(Train otherTrain)

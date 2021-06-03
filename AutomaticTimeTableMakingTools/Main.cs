@@ -2754,832 +2754,132 @@ namespace AutomaticTimeTableMakingTools
             //疏解区用经过疏解区-圃田西的时间顺序判定上下行，圃田西->疏解区的在左边，疏解区->圃田西的在右边
             //东所南所单独写，判断走行线
             List<Train> _allTrains = allTrains_New;
-            for(int i = 0; i < _distributedTimeTables.Count; i++)
+            for (int j = 0; j < _allTrains.Count; j++)
+            {
+                for (int _sCount = 0; _sCount < _allTrains[j].newStations.Count; _sCount++)
+                {
+                    int mainTrackNum = 0;
+                    if (_allTrains[j].mainStation != null && _allTrains[j].mainStation.stationName.Equals("郑州东"))
+                    {//给主站加上场，再根据各时刻表替换成各时刻表的站
+                        if (_allTrains[j].mainStation.stationTrackNum.Equals("IX"))
+                            mainTrackNum = 9;
+                        if (_allTrains[j].mainStation.stationTrackNum.Equals("X"))
+                            mainTrackNum = 10;
+                        if (_allTrains[j].mainStation.stationTrackNum.Equals("XVIII"))
+                            mainTrackNum = 18;
+                        if (_allTrains[j].mainStation.stationTrackNum.Equals("XIX"))
+                            mainTrackNum = 19;
+                        if (_allTrains[j].mainStation.stationTrackNum.Equals("XXV"))
+                            mainTrackNum = 25;
+                        if (_allTrains[j].mainStation.stationTrackNum.Equals("XXVI"))
+                            mainTrackNum = 26;
+                        if (_allTrains[j].mainStation.stationTrackNum.Equals("XXIX"))
+                            mainTrackNum = 29;
+                        if (_allTrains[j].mainStation.stationTrackNum.Equals("XXX"))
+                            mainTrackNum = 30;
+                        if (mainTrackNum == 0)
+                            int.TryParse(_allTrains[j].mainStation.stationTrackNum, out mainTrackNum);
+                        if (mainTrackNum != 0)
+                        {
+                            if (mainTrackNum >= 1 && mainTrackNum <= 16)
+                            {
+                                _allTrains[j].mainStation.stationName = "郑州东京广场";
+                            }
+                            if (mainTrackNum >= 17 && mainTrackNum <= 20)
+                            {
+                                _allTrains[j].mainStation.stationName = "郑州东城际场";
+                            }
+                            if (mainTrackNum >= 21 && mainTrackNum <= 30)
+                            {
+                                _allTrains[j].mainStation.stationName = "郑州东徐兰场";
+                            }
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < _distributedTimeTables.Count; i++)
             {
                 string mainStation = _distributedTimeTables[i].Title;
                 //↓√↑×
                 List<Train> _downTrains = new List<Train>();
                 List<Train> _upTrains = new List<Train>();
-                for (int  j =0;j< _allTrains.Count; j++)
+                //其他普通车站，以标题为准，经过该车站的列车都加进去
+                //特殊情况：京广场包含马头岗->徐兰场，徐兰场包括东所->城际场，（有了添加）
+                for(int  j = 0; j< _allTrains.Count; j++)
                 {
-                    Train _train = _allTrains[j];
-                    foreach (Station _s in _train.newStations)
-                    {//有曹古寺，京广只要1-16 徐兰全要
-                        if (_s.stationName.Contains("曹古寺"))
+                    for(int _sCount = 0; _sCount < _allTrains[j].newStations.Count; _sCount++)
+                    {
+                        Station _station = _allTrains[j].Clone().newStations[_sCount];
+                        Train _tempTrain = _allTrains[j].Clone();
+                        if (_station.stationName.Replace("线路所", "").Replace("站", "").Equals(mainStation))
                         {
-                            foreach (TimeTable table in allTimeTables)
+                            //把主站和当前站换一下
+                            Station _tempMainStation = _tempTrain.Clone().mainStation;
+                            _tempTrain.newStations.Add(_tempMainStation);
+                            _tempTrain.newStations.RemoveAt(_sCount);
+                            _tempTrain.mainStation = _station;
+                            if (_allTrains[j].upOrDown)
                             {
-                                if (!table.Title.Contains("京广") || !table.Title.Contains("徐兰"))
+                                _downTrains.Add(_tempTrain);
+                            }
+                            else
+                            {
+                                _upTrains.Add(_tempTrain);
+                            }
+                        }
+                        //特殊情况
+                        if(_station.stationName.Replace("线路所", "").Replace("站", "").Contains("马头岗") && mainStation.Contains("京广场"))
+                        {//如果这个车不经过京广场，添加进去
+                            bool hasGet = false;
+                            foreach(Station _s in _allTrains[j].newStations)
+                            {
+                                if (_s.stationName.Contains("京广场"))
                                 {
-                                    continue;
+                                    hasGet = true;
+                                    break;
                                 }
-                                //郑西进徐兰场列车删除
-                                if (table.Title.Contains("京广") && _train.mainStation != null && _train.mainStation.stationName.Length != 0)
+                            }
+                            if(hasGet == false)
+                            {
+                                if (_allTrains[j].upOrDown)
                                 {
-                                    int track = -1;
-                                    int.TryParse(_train.mainStation.stationTrackNum, out track);
-                                    if (track > 16)
-                                    {
-                                        continue;
-                                    }
+                                    _downTrains.Add(_tempTrain);
                                 }
-                                if (_train.mainStation != null && _train.mainStation.stationName.Length != 0)
+                                else
                                 {
-                                    _train.mainStation.stationName = "京广/徐兰";
-                                    //南向西列车不添加徐兰场
-                                    bool skipThis = false;
-                                    foreach (Station _station in _train.newStations)
-                                    {
-                                        if (_station.stationName.Equals("郑州西") && table.Title.Equals("徐兰"))
-                                        {
-                                            int ZZWestStartTime = 0;
-                                            int.TryParse(_station.startedTime.Replace(":", "").Trim(), out ZZWestStartTime);
-                                            foreach (Train _tt in _allTrains)
-                                            {
-                                                if (_train.firstTrainNum.Equals(_tt.firstTrainNum))
-                                                {
-                                                    foreach (Station _ss in _tt.newStations)
-                                                    {
-                                                        if (_ss.stationName.Contains("许昌东"))
-                                                        {//满足条件
-                                                            int JGStationStartTime = 0;
-                                                            int.TryParse(_ss.startedTime.Replace(":", "").Trim(), out JGStationStartTime);
-                                                            if (ZZWestStartTime < 100 && ZZWestStartTime != 0)
-                                                            {
-                                                                ZZWestStartTime = ZZWestStartTime + 2400;
-                                                            }
-                                                            if (JGStationStartTime < ZZWestStartTime && JGStationStartTime != 0 && ZZWestStartTime != 0)
-                                                            {
-                                                                skipThis = true;
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    if (skipThis)
-                                    {
-                                        continue;
-                                    }
-                                    if (_train.upOrDown)
-                                    {
-                                        table.downTrains.Add(_train);
-                                    }
-                                    else
-                                    {
-                                        table.upTrains.Add(_train);
-                                    }
+                                    _upTrains.Add(_tempTrain);
                                 }
                             }
                         }
-                        //202012 郑徐进京广场列车在京广场显示一份
-                        //0G6612
-                        if (_s.stationName.Contains("鸿宝"))
+
+                        //特殊情况
+                        if (_station.stationName.Equals("郑州东动车所") && mainStation.Contains("徐兰场"))
                         {
-                            foreach (TimeTable table in allTimeTables)
+                            if(_station.stationTrackNum.Equals("17") ||
+                                _station.stationTrackNum.Equals("18") ||
+                                _station.stationTrackNum.Equals("19") ||
+                                _station.stationTrackNum.Equals("20") ||
+                                _station.stationTrackNum.Equals("XVIII") ||
+                                _station.stationTrackNum.Equals("XIX"))
                             {
-                                if (!table.Title.Contains("京广") || !table.Title.Contains("徐兰"))
+                                if (_allTrains[j].upOrDown)
                                 {
-                                    continue;
+                                    _downTrains.Add(_tempTrain);
                                 }
-                                //徐兰场本身的车跳过
-                                if (table.Title.Contains("京广") && _train.mainStation != null && _train.mainStation.stationName.Length != 0)
+                                else
                                 {
-                                    int track = -1;
-                                    int.TryParse(_train.mainStation.stationTrackNum, out track);
-                                    if (track > 16)
-                                    {
-                                        continue;
-                                    }
-                                }
-                                if (_train.mainStation != null && _train.mainStation.stationName.Length != 0)
-                                {
-                                    _train.mainStation.stationName = "京广/徐兰";
-                                    if (_train.upOrDown)
-                                    {
-                                        table.downTrains.Add(_train);
-                                    }
-                                    else
-                                    {
-                                        table.upTrains.Add(_train);
-                                    }
+                                    _upTrains.Add(_tempTrain);
                                 }
                             }
+
                         }
                     }
-
                 }
+                _distributedTimeTables[i].upTrains = _upTrains;
+                _distributedTimeTables[i].downTrains = _downTrains;
+
             }
             return _distributedTimeTables;
-
-
-
-
-
-            ////把给定的车次匹配一个时刻表
-            //第二个参数用于处理北向东列车
-            //第三个参数主要是为了处理二郎庙-疏解区列车
-
-            foreach (TimeTable table in allTimeTables)
-            {//用车次里的车站名去包时刻表里的，包上了之后，把时刻表里的车次模型加上
-                //这张时刻表有，其他时刻表没有-不匹配主站
-                foreach (Station station in _train.newStations)
-                {
-                    bool hasTheSameOne = false;
-                    for (int i = 0; i < table.stations.Length; i++)
-                    {
-                        if (station.stationName.Trim().Equals("郑州"))
-                        {
-                            continue;
-                        }
-                        if ((station.stationName.Trim().Contains(table.stations[i].ToString().Trim()) ||
-                            table.stations[i].ToString().Trim().Contains(station.stationName.Trim())) && !station.stationName.Trim().Equals("郑州"))
-                        {//这张时刻表有
-                            if (!hasTheSameOne)
-                            {//其他时刻表内没有这个车站，则可以
-                                int _trackNum = 0;
-                                if (_train.mainStation.stationName.Length == 0)
-                                {
-                                    //此时列车为二郎庙->疏解区->郑州站的列车，
-                                    //为了能够在时刻表上进行排序，按照二郎庙->京广场的平均时间4分钟来定，假设该列车进了京广场。
-                                    //如果车次中不包含“二郎庙线路所”，则该车次为华山北->郑州列车，不计入统计。
-                                    bool hasGotOne = false;
-                                    foreach (Station _station in _train.newStations)
-                                    {
-                                        if (_station.stationName.Contains("许昌东"))
-                                        {//此时如果为下行，则京广场时间=二郎庙时间-4 上行则+4
-                                         //先找到经过圃田西的同名车次，添加进来-否则京广场会出现上下行两趟该车次
-                                         //找二郎庙时间
-                                            bool hasGotTime = false;
-                                            int JGTime = 0;
-                                            foreach (Station _s in _train.newStations)
-                                            {
-                                                if (_s.stationName.Contains("二郎庙"))
-                                                {
-                                                    int.TryParse(_s.startedTime.Replace(":", ""), out JGTime);
-                                                    hasGotTime = true;
-                                                }
-                                                if (hasGotTime)
-                                                {
-                                                    break;
-                                                }
-                                            }
-                                            for (int ij = 0; ij < trainsWithoutMainStation.Count; ij++)
-                                            {
-                                                Train _secondTrain = trainsWithoutMainStation[ij];
-                                                if (_train.upOrDown != _secondTrain.upOrDown)
-                                                {
-                                                    if (_train.secondTrainNum != null && _train.secondTrainNum.Length != 0 && _secondTrain.secondTrainNum != null && _secondTrain.secondTrainNum.Length != 0)
-                                                    {
-                                                        if (_train.firstTrainNum.Equals(_secondTrain.firstTrainNum) ||
-                                                            _train.firstTrainNum.Equals(_secondTrain.secondTrainNum) ||
-                                                            _train.secondTrainNum.Equals(_secondTrain.firstTrainNum) ||
-                                                            _train.secondTrainNum.Equals(_secondTrain.secondTrainNum))
-                                                        {//如果车号相同的话，2的元素给1，把2删除
-                                                            foreach (Station _s in _secondTrain.newStations)
-                                                            {
-                                                                Station _ss = new Station();
-                                                                _ss = _s;
-                                                                _train.newStations.Add(_ss);
-                                                            }
-                                                        }
-                                                    }
-                                                    else
-                                                    {//如果两个车相同，要么都有两个车号，要么都有一个车号
-                                                        if (_train.firstTrainNum.Equals(_secondTrain.firstTrainNum))
-                                                        {
-                                                            foreach (Station _s in _secondTrain.newStations)
-                                                            {
-                                                                Station _ss = new Station();
-                                                                _ss = _s;
-                                                                _train.newStations.Add(_ss);
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            Station _mainStation = new Station();
-                                            _mainStation.stationName = table.Title;
-                                            if (_train.upOrDown)
-                                            {//下行
-                                                if (JGTime != 0)
-                                                {
-                                                    //使用60分进制加减
-                                                    if ((JGTime % 100) < 4)
-                                                    {//比如是1119，那么就是 (11-1)x100 = 1000 + (60 - ( 22 - (19)) = 1057
-                                                        JGTime = (((JGTime / 100) - 1) * 100) + (60 - (4 - (JGTime % 100)));
-                                                    }
-                                                    JGTime = JGTime - 4;
-                                                    _mainStation.stoppedTime = "排序(二郎庙-4mins)";
-                                                    _mainStation.startedTime = JGTime.ToString();
-                                                }
-                                            }
-                                            else
-                                            {
-                                                if (JGTime != 0)
-                                                {
-                                                    //使用60分进制加减
-                                                    if ((60 - (JGTime % 100)) < 4)
-                                                    {//比如是1150，那么就是 (11-1)x100 = 1200 + (22 - 10) = 1212
-
-                                                        JGTime = (((JGTime / 100) + 1) * 100) + (4 - (JGTime % 100));
-                                                    }
-                                                    JGTime = JGTime + 4;
-                                                    _mainStation.stoppedTime = "排序(二郎庙+4mins)";
-                                                    _mainStation.startedTime = JGTime.ToString();
-                                                }
-                                            }
-                                            _train.mainStation = _mainStation;
-                                            hasGotOne = true;
-                                        }
-                                        else if (_station.stationName.Contains("开封北"))
-                                        {//徐州方向不经过郑州东站的列车
-                                         //根据上下行，±20分钟决定徐兰场时间
-                                            Station _mainStation = new Station();
-                                            _mainStation.stationName = table.Title;
-                                            int XLTime = 0;
-                                            int.TryParse(_station.stoppedTime.Replace(":", ""), out XLTime);
-                                            if (XLTime == 0)
-                                            {
-                                                int.TryParse(_station.startedTime.Replace(":", ""), out XLTime);
-                                            }
-                                            if (XLTime != 0)
-                                            {
-                                                if (_train.upOrDown)
-                                                {//下行
-                                                 //使用60分进制加减
-                                                    if ((XLTime % 100) < 20)
-                                                    {
-                                                        XLTime = (((XLTime / 100) - 1) * 100) + (60 - (20 - (XLTime % 100)));
-                                                    }
-                                                    XLTime = XLTime + 20;
-                                                    _mainStation.stoppedTime = "排序(开封北+20mins)";
-                                                    _mainStation.startedTime = XLTime.ToString();
-                                                }
-                                                else
-                                                {
-                                                    //使用60分进制加减
-                                                    if ((60 - (XLTime % 100)) < 22)
-                                                    {//比如是1150，那么就是 (11-1)x100 = 1200 + (22 - 10) = 1212
-
-                                                        XLTime = (((XLTime / 100) + 1) * 100) + (20 - (XLTime % 100));
-                                                    }
-                                                    XLTime = XLTime - 20;
-                                                    _mainStation.stoppedTime = "排序(开封北-20mins)";
-                                                    _mainStation.startedTime = XLTime.ToString();
-                                                }
-                                                _train.mainStation = _mainStation;
-                                                hasGotOne = true;
-                                            }
-                                        }
-                                        else if (_station.stationName.Contains("新乡东"))
-                                        {//北京方向不经过郑州东站的列车
-
-                                        }
-                                        else if (_station.stationName.Contains("南曹"))
-                                        {//机场方向不经过郑州东站的列车
-                                         //根据上下行，±5分钟决定城际场时间
-                                            Station _mainStation = new Station();
-                                            _mainStation.stationName = table.Title;
-                                            int JCTime = 0;
-                                            int.TryParse(_station.stoppedTime.Replace(":", ""), out JCTime);
-                                            if (JCTime == 0)
-                                            {
-                                                int.TryParse(_station.startedTime.Replace(":", ""), out JCTime);
-                                            }
-                                            if (JCTime != 0)
-                                            {
-                                                if (_train.upOrDown)
-                                                {//下行
-                                                 //使用60分进制加减
-                                                    if ((JCTime % 100) < 5)
-                                                    {
-                                                        JCTime = (((JCTime / 100) - 1) * 100) + (60 - (5 - (JCTime % 100)));
-                                                    }
-                                                    JCTime = JCTime + 5;
-                                                    _mainStation.stoppedTime = "排序(南曹+5mins)";
-                                                    _mainStation.startedTime = JCTime.ToString();
-                                                }
-                                                else
-                                                {
-                                                    //使用60分进制加减
-                                                    if ((60 - (JCTime % 100)) < 5)
-                                                    {//比如是1150，那么就是 (11-1)x100 = 1200 + (22 - 10) = 1212
-
-                                                        JCTime = (((JCTime / 100) + 1) * 100) + (5 - (JCTime % 100));
-                                                    }
-                                                    JCTime = JCTime - 5;
-                                                    _mainStation.stoppedTime = "排序(南曹-5mins)";
-                                                    _mainStation.startedTime = JCTime.ToString();
-                                                }
-                                                _train.mainStation = _mainStation;
-                                                hasGotOne = true;
-                                            }
-
-                                        }
-                                        else if (_station.stationName.Contains("寺后"))
-                                        {//202012南站方向不经过郑州东站的列车(郑万修改预留)
-                                            Station _mainStation = new Station();
-                                            int JCTime = 0;
-                                            int.TryParse(_station.stoppedTime.Replace(":", ""), out JCTime);
-                                            if (JCTime == 0)
-                                            {
-                                                int.TryParse(_station.startedTime.Replace(":", ""), out JCTime);
-                                            }
-                                            if (JCTime != 0)
-                                            {
-                                                if (_train.upOrDown)
-                                                {//下行
-                                                 //使用60分进制加减
-                                                    if ((JCTime % 100) < 20)
-                                                    {
-                                                        JCTime = (((JCTime / 100) - 1) * 100) + (60 - (20 - (JCTime % 100)));
-                                                    }
-                                                    JCTime = JCTime - 20;
-                                                    _mainStation.stoppedTime = "排序(南站-20mins)";
-                                                    _mainStation.startedTime = JCTime.ToString();
-                                                }
-                                                else
-                                                {
-                                                    //使用60分进制加减
-                                                    if ((60 - (JCTime % 100)) < 20)
-                                                    {//比如是1150，那么就是 (11-1)x100 = 1200 + (22 - 10) = 1212
-
-                                                        JCTime = (((JCTime / 100) + 1) * 100) + (20 - (JCTime % 100));
-                                                    }
-                                                    JCTime = JCTime + 20;
-                                                    _mainStation.stoppedTime = "排序(南站+20mins)";
-                                                    _mainStation.startedTime = JCTime.ToString();
-                                                }
-                                                _train.mainStation = _mainStation;
-                                                hasGotOne = true;
-                                            }
-                                            if (hasGotOne)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        if (hasGotOne)
-                                        {
-                                            break;
-                                        }
-                                    }
-                                    if (!hasGotOne)
-                                    {
-                                        return false;
-                                    }
-                                }
-                                else
-                                {
-                                    int trackNum = 0;
-                                    int.TryParse(_train.mainStation.stationTrackNum, out trackNum);
-                                    _trackNum = trackNum;
-                                    //特殊情况-（开封北<->新乡东）列车无法正确显示
-                                    //情况1，开封北->新乡东列车在京广场复制鸿宝部分
-                                    if (trackNum > 0 && trackNum <= 16)
-                                    {
-                                        foreach (Station _s in _train.newStations)
-                                        {
-                                            if (_s.stationName.Contains("鸿宝"))
-                                            {
-                                                if (_train.secondTrainNum != null && _train.secondTrainNum.Length != 0)
-                                                {//必须换向
-                                                    if (_train.secondTrainNum.Length == 0)
-                                                    {
-                                                        break;
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    break;
-                                                }
-                                                foreach (Train _t in trainsWithMainStation)
-                                                {
-                                                    if (_t.firstTrainNum.Equals(_train.firstTrainNum) ||
-                                                        _t.firstTrainNum.Equals(_train.secondTrainNum))
-                                                    {//车次相等
-                                                        //并且经过新乡东
-                                                        foreach (Station _ss in _t.newStations)
-                                                        {
-                                                            if (_ss.stationName.Contains("新乡东"))
-                                                            {//满足条件
-                                                                _train.mainStation.stationName = "京广/徐兰";
-                                                                foreach (TimeTable _tb in allTimeTables)
-                                                                {
-                                                                    if (_tb.Title.Equals("京广"))
-                                                                    {
-                                                                        if (_train.upOrDown)
-                                                                        {
-                                                                            _tb.downTrains.Add(_train);
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            _tb.upTrains.Add(_train);
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        _train.mainStation.stationName = table.Title;
-                                    }
-                                    else if (trackNum > 20 && trackNum <= 32)
-                                    {//新乡东->开封北 在徐兰场显示一份
-                                        foreach (Station _s in _train.newStations)
-                                        {
-                                            if (_s.stationName.Contains("马头岗"))
-                                            {
-                                                if (_train.secondTrainNum != null && _train.secondTrainNum.Length != 0)
-                                                {//必须换向
-                                                    if (_train.secondTrainNum.Length == 0)
-                                                    {
-                                                        break;
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    break;
-                                                }
-                                                foreach (Train _t in trainsWithMainStation)
-                                                {
-                                                    if (_t.firstTrainNum.Equals(_train.firstTrainNum) ||
-                                                        _t.firstTrainNum.Equals(_train.secondTrainNum))
-                                                    {//车次相等
-                                                        //并且经过开封北
-                                                        foreach (Station _ss in _t.newStations)
-                                                        {
-                                                            if (_ss.stationName.Contains("开封北"))
-                                                            {//满足条件
-                                                                _train.mainStation.stationName = "京广/徐兰";
-                                                                foreach (TimeTable _tb in allTimeTables)
-                                                                {
-                                                                    if (_tb.Title.Equals("徐兰"))
-                                                                    {
-                                                                        if (_train.upOrDown)
-                                                                        {
-                                                                            _tb.downTrains.Add(_train);
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            _tb.upTrains.Add(_train);
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        _train.mainStation.stationName = table.Title;
-                                    }
-                                    else
-                                    {
-                                        _train.mainStation.stationName = table.Title;
-                                    }
-                                }
-                                if (_train.upOrDown)
-                                {
-                                    table.downTrains.Add(_train);
-                                }
-                                else
-                                {
-                                    table.upTrains.Add(_train);
-                                }
-                                //删除徐兰场内显示的西->京广场列车
-                                /*
-                                if (table.Title.Equals("徐兰") && !_train.upOrDown)
-                                {
-                                    if (_trackNum <= 16)
-                                    {
-                                        foreach (Train _t in trainsWithMainStation)
-                                        {
-                                            if (_t.firstTrainNum.Equals(_train.firstTrainNum))
-                                            {//在京广场内找到向北-南开的车，不在徐兰场显示
-                                                foreach (Station _ss in _t.newStations)
-                                                {
-                                                    if (_ss.stationName.Contains("许昌东") ||
-                                                    _ss.stationName.Contains("新乡东"))
-                                                    {//满足条件
-                                                        int JGStationStartTime = 0;
-                                                        int mainStationStartTime = 0;
-                                                        int.TryParse(_ss.startedTime.Replace(":","").Trim(),out JGStationStartTime);
-                                                        int.TryParse(_train.mainStation.startedTime, out mainStationStartTime);
-                                                        if(JGStationStartTime > mainStationStartTime)
-                                                        {
-                                                            if (_train.upOrDown)
-                                                            {
-                                                                table.downTrains.Remove(_train);
-                                                            }
-                                                            else
-                                                            {
-                                                                table.upTrains.Remove(_train);
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            else if (_train.secondTrainNum != null && _train.secondTrainNum.Length!= 0)
-                                            {
-                                                if (_t.firstTrainNum.Equals(_train.secondTrainNum))
-                                                {
-                                                    foreach (Station _ss in _t.newStations)
-                                                    {
-                                                        if (_ss.stationName.Contains("许昌东") ||
-                                                        _ss.stationName.Contains("新乡东"))
-                                                        {//满足条件
-                                                            int JGStationStartTime = 0;
-                                                            int mainStationStartTime = 0;
-                                                            int.TryParse(_ss.startedTime.Replace(":", "").Trim(), out JGStationStartTime);
-                                                            int.TryParse(_train.mainStation.startedTime, out mainStationStartTime);
-                                                            if (JGStationStartTime > mainStationStartTime)
-                                                            {
-                                                                if (_train.upOrDown)
-                                                                {
-                                                                    table.downTrains.Remove(_train);
-                                                                }
-                                                                else
-                                                                {
-                                                                    table.upTrains.Remove(_train);
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                */
-                                hasGotTimeTable = true;
-                            }
-                            if (hasGotTimeTable)
-                            {
-                                break;
-                            }
-                        }
-                        if (hasGotTimeTable)
-                        {
-                            //break;
-                        }
-                    }
-                    if (hasGotTimeTable)
-                    {
-                        //break;
-                    }
-                }
-            }
-
-            if (hasGotTimeTable == false)
-            {//如果没有get到时刻表，尝试使用接续列车的时刻来获取
-                bool skipThis = false;
-                foreach (Station _s in _train.newStations)
-                {
-                    if (_s.stationName.Contains("动车所"))
-                    {
-                        skipThis = true;
-                    }
-                    break;
-                }
-                if ((_train.mainStation != null && _train.mainStation.stationName.Length != 0) && (skipThis == false))
-                {
-                    string continueTrain = "";
-                    if (_train.mainStation.stationType == 1)
-                    {//始发-找前接续列车
-                        if (_train.mainStation.stoppedTime.Contains("由"))
-                        {
-                            continueTrain = _train.mainStation.stoppedTime.Replace("由", "").Replace("改", "").Trim();
-                        }
-                        int a = 0;
-                    }
-                    else if (_train.mainStation.stationType == 2)
-                    {
-                        if (_train.mainStation.startedTime.Contains("续开"))
-                        {
-                            continueTrain = _train.mainStation.startedTime.Replace("续开", "").Trim();
-                        }
-                    }
-                    if (continueTrain.Length != 0)
-                    {//有接续
-                        foreach (TimeTable tb in allTimeTables)
-                        {
-                            foreach (Train t in tb.upTrains)
-                            {//上下行分开找
-                                if (continueTrain.Equals(t.firstTrainNum))
-                                {//按接续的来
-                                    if (t.mainStation != null && t.mainStation.stationName.Length != 0)
-                                    {
-                                        if (t.mainStation.stationName.Length != 0)
-                                        {//可以使用
-                                            _train.mainStation.stationName = tb.Title;
-                                            if (_train.upOrDown)
-                                            {
-                                                tb.downTrains.Add(_train);
-                                            }
-                                            else
-                                            {
-                                                tb.upTrains.Add(_train);
-                                            }
-                                            hasGotTimeTable = true;
-                                        }
-                                    }
-                                }
-                                else if (t.secondTrainNum != null && t.secondTrainNum.Length != 0)
-                                {
-                                    if (t.secondTrainNum.Length != 0)
-                                    {
-                                        if (continueTrain.Equals(t.secondTrainNum))
-                                        {//按接续的来
-                                            if (t.mainStation != null && t.mainStation.stationName.Length != 0)
-                                            {
-                                                if (t.mainStation.stationName.Length != 0)
-                                                {//可以使用
-                                                    _train.mainStation.stationName = tb.Title;
-                                                    if (_train.upOrDown)
-                                                    {
-                                                        tb.downTrains.Add(_train);
-                                                    }
-                                                    else
-                                                    {
-                                                        tb.upTrains.Add(_train);
-                                                    }
-                                                    hasGotTimeTable = true;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                if (hasGotTimeTable)
-                                {
-                                    break;
-                                }
-                            }
-                            foreach (Train t in tb.downTrains)
-                            {//上下行分开找
-                                if (continueTrain.Equals(t.firstTrainNum))
-                                {//按接续的来
-                                    if (t.mainStation != null && t.mainStation.stationName.Length != 0)
-                                    {
-                                        if (t.mainStation.stationName.Length != 0)
-                                        {//可以使用
-                                            _train.mainStation.stationName = tb.Title + "接续";
-                                            if (_train.upOrDown)
-                                            {
-                                                tb.downTrains.Add(_train);
-                                            }
-                                            else
-                                            {
-                                                tb.upTrains.Add(_train);
-                                            }
-                                            hasGotTimeTable = true;
-                                        }
-                                    }
-                                }
-                                else if (t.secondTrainNum != null && t.secondTrainNum.Length != 0)
-                                {
-                                    if (t.secondTrainNum.Length != 0)
-                                    {
-                                        if (continueTrain.Equals(t.secondTrainNum))
-                                        {//按接续的来
-                                            if (t.mainStation != null)
-                                            {
-                                                if (t.mainStation.stationName.Length != 0)
-                                                {//可以使用
-                                                    _train.mainStation.stationName = tb.Title + "接续";
-                                                    if (_train.upOrDown)
-                                                    {
-                                                        tb.downTrains.Add(_train);
-                                                    }
-                                                    else
-                                                    {
-                                                        tb.upTrains.Add(_train);
-                                                    }
-                                                    hasGotTimeTable = true;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                if (hasGotTimeTable)
-                                {
-                                    break;
-                                }
-                            }
-                            if (hasGotTimeTable)
-                            {
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (!hasGotTimeTable)
-            {//仍旧获取不到时刻表的
-             //此时按照股道数判断时刻
-                if (_train.mainStation != null && _train.mainStation.stationName.Length != 0)
-                {
-                    if (_train.mainStation.stationTrackNum != null && _train.mainStation.stationTrackNum.Length != 0)
-                    {
-                        int trackNum = 0;
-                        int.TryParse(_train.mainStation.stationTrackNum, out trackNum);
-                        if (trackNum > 0 &&
-                            trackNum <= 16)
-                        {//京广场-若需要改进兼容性，此处需要根据车站实际情况修改
-                            foreach (TimeTable _table in allTimeTables)
-                            {
-                                if (_table.Title.Equals("京广"))
-                                {
-                                    _train.mainStation.stationName = _table.Title;
-                                    if (_train.upOrDown)
-                                    {
-                                        _table.downTrains.Add(_train);
-                                    }
-                                    else
-                                    {
-                                        _table.upTrains.Add(_train);
-                                    }
-                                    hasGotTimeTable = true;
-                                    return true;
-                                }
-                            }
-                        }
-                        else if (trackNum > 20 && trackNum <= 32)
-                        {//徐兰场
-                            foreach (TimeTable _table in allTimeTables)
-                            {
-                                if (_table.Title.Equals("徐兰"))
-                                {
-                                    _train.mainStation.stationName = _table.Title;
-                                    if (_train.upOrDown)
-                                    {
-                                        _table.downTrains.Add(_train);
-                                    }
-                                    else
-                                    {
-                                        _table.upTrains.Add(_train);
-                                    }
-                                    hasGotTimeTable = true;
-                                    return true;
-                                }
-                            }
-                        }
-                        else if (trackNum >= 16 && trackNum <= 20)
-                        {
-                            foreach (TimeTable _table in allTimeTables)
-                            {
-                                if (_table.Title.Equals("城际"))
-                                {
-                                    _train.mainStation.stationName = _table.Title;
-                                    if (_train.upOrDown)
-                                    {
-                                        _table.downTrains.Add(_train);
-                                    }
-                                    else
-                                    {
-                                        _table.upTrains.Add(_train);
-                                    }
-                                    hasGotTimeTable = true;
-                                }
-                                //城际场入库回库车算徐兰场
-                                if (_train.stopStation.Contains("动车所") || _train.startStation.Contains("动车所"))
-                                {
-                                    if (_table.Title.Equals("徐兰"))
-                                    {
-                                        _train.mainStation.stationName = _table.Title;
-                                        if (_train.upOrDown)
-                                        {
-                                            _table.downTrains.Add(_train);
-                                        }
-                                        else
-                                        {
-                                            _table.upTrains.Add(_train);
-                                        }
-                                        hasGotTimeTable = true;
-                                    }
-                                    else
-                                    {
-                                        hasGotTimeTable = false;
-                                    }
-                                }
-                                if (hasGotTimeTable)
-                                {
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            if (!hasGotTimeTable)
-            {//此时还没有，说明为（北京西-安阳东）类似列车
-                return false;
-            }
-            return false;
 
         }
 
@@ -4151,8 +3451,8 @@ namespace AutomaticTimeTableMakingTools
                         }
                         try
                         {
-                            FileStream file = new FileStream(table.fileName + "-处理后.xls", FileMode.Create);
-                            System.Diagnostics.Process.Start("explorer.exe", table.fileName + "-处理后.xls");
+                            FileStream file = new FileStream(table.fileName.Replace(table.fileName.Split('\\')[table.fileName.Split('\\').Length - 1], "处理后-"+table.fileName.Split('\\')[table.fileName.Split('\\').Length - 1]) , FileMode.Create);
+                            //System.Diagnostics.Process.Start("explorer.exe", table.fileName.Replace(table.fileName.Split('\\')[table.fileName.Split('\\').Length - 1], "处理后-" + table.fileName.Split('\\')[table.fileName.Split('\\').Length - 1]));
                             workbook.Write(file);
 
                             file.Close();
@@ -4302,7 +3602,7 @@ namespace AutomaticTimeTableMakingTools
                     {
                         allDistributedTimeTables = _dt;
                         //把每个分表的车匹配上
-                        //allDistributedTimeTables = getDistributedTrainsWithALLTRAINS(_dt);
+                        allDistributedTimeTables = getDistributedTrainsWithALLTRAINS(_dt);
                         //matchTrainAndTimeTable();
                         createTimeTableFile(DistributedTimeTableWorkbooks, _dt,1);
                     }
