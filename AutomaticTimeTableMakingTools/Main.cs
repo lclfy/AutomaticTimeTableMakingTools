@@ -2875,8 +2875,14 @@ namespace AutomaticTimeTableMakingTools
                         }
                     }
                 }
+                foreach (TimeTable _table in allTimeTables)
+                {
+
+                }
                 _distributedTimeTables[i].upTrains = _upTrains;
                 _distributedTimeTables[i].downTrains = _downTrains;
+                _distributedTimeTables[i].upTrains.Sort();
+                _distributedTimeTables[i].downTrains.Sort();
 
             }
             return _distributedTimeTables;
