@@ -38,6 +38,7 @@
             this.DistributedTimeTableFile_lbl = new System.Windows.Forms.Label();
             this.modeSelect_cb = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // ImportNewTimeTable_btn
@@ -69,7 +70,7 @@
             this.getTrains_btn.Name = "getTrains_btn";
             this.getTrains_btn.Size = new System.Drawing.Size(233, 78);
             this.getTrains_btn.TabIndex = 4;
-            this.getTrains_btn.Text = "处理";
+            this.getTrains_btn.Text = "开始转换";
             this.getTrains_btn.UseVisualStyleBackColor = true;
             this.getTrains_btn.Click += new System.EventHandler(this.getTrains_btn_Click);
             // 
@@ -102,12 +103,12 @@
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label7.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.label7.Location = new System.Drawing.Point(79, 423);
+            this.label7.Location = new System.Drawing.Point(59, 423);
             this.label7.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(880, 31);
+            this.label7.Size = new System.Drawing.Size(904, 31);
             this.label7.TabIndex = 21;
-            this.label7.Text = "在表头添加/删除中间站/线路所，注意表头格式（关键字：到达-股道-发出-通过）";
+            this.label7.Text = "在各表头添加/删除中间站/线路所，注意表头格式（关键字：到达-股道-发出-通过）";
             // 
             // ImportDistributedTrainTimeTableFile_btn
             // 
@@ -117,7 +118,7 @@
             this.ImportDistributedTrainTimeTableFile_btn.Name = "ImportDistributedTrainTimeTableFile_btn";
             this.ImportDistributedTrainTimeTableFile_btn.Size = new System.Drawing.Size(233, 78);
             this.ImportDistributedTrainTimeTableFile_btn.TabIndex = 22;
-            this.ImportDistributedTrainTimeTableFile_btn.Text = "所有行车岗位表头";
+            this.ImportDistributedTrainTimeTableFile_btn.Text = "各行车岗点空表头";
             this.ImportDistributedTrainTimeTableFile_btn.UseVisualStyleBackColor = true;
             this.ImportDistributedTrainTimeTableFile_btn.Click += new System.EventHandler(this.ImportDistributedTrainTimeTableFile_btn_Click);
             // 
@@ -137,7 +138,7 @@
             this.modeSelect_cb.FormattingEnabled = true;
             this.modeSelect_cb.Items.AddRange(new object[] {
             "①路局表(每趟单独显示)",
-            "②技术科-临客汇总表(新)",
+            "②技术科-子东临客表(新)",
             "③技术科-传统线路分表",
             "④路局表(多车合并显示)"});
             this.modeSelect_cb.Location = new System.Drawing.Point(31, 152);
@@ -156,11 +157,24 @@
             this.label1.TabIndex = 25;
             this.label1.Text = "类型";
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label2.ForeColor = System.Drawing.SystemColors.Highlight;
+            this.label2.Location = new System.Drawing.Point(41, 392);
+            this.label2.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(974, 31);
+            this.label2.TabIndex = 26;
+            this.label2.Text = "提示：使用子东版新临客时刻表时，将需要处理的表放在首个工作簿内或命名为“汇总表”";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1036, 625);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.modeSelect_cb);
             this.Controls.Add(this.DistributedTimeTableFile_lbl);
@@ -192,6 +206,7 @@
         private System.Windows.Forms.Label DistributedTimeTableFile_lbl;
         private System.Windows.Forms.ComboBox modeSelect_cb;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
     }
 }
 

@@ -14,19 +14,22 @@ namespace AutomaticTimeTableMakingTools.Models
         public string stopStation { get; set; }
         //上下行 true↓ false↑
         public bool upOrDown { get; set; }
+        //
+        public bool hasNoUpOrDown { get; set; }
         //主站标签，徐兰场/京广场/城际场等，用于填时刻表确定位置
         public Station mainStation { get; set; }
         public List<Station> newStations { get; set; }
         public List<TrainFile> shownInFiles { get; set; }
 
         public Train(string _firstTrainNum = "", string _secondTrainNum = "", string _startStation = "",
-                                string _stopStation = "", bool _upOrDown = false, Station _mainStation = null, List<Station> _newStations = null, List<TrainFile> _shownInFiles = null)
+                                string _stopStation = "", bool _upOrDown = false, Station _mainStation = null, List<Station> _newStations = null, List<TrainFile> _shownInFiles = null, bool hasNoUpOrDown = false)
         {
             firstTrainNum = _firstTrainNum;
             secondTrainNum = _secondTrainNum;
             startStation = _startStation;
             stopStation = _stopStation;
             upOrDown = _upOrDown;
+            hasNoUpOrDown = false;
 
             if(_mainStation == null)
             {
@@ -59,7 +62,7 @@ namespace AutomaticTimeTableMakingTools.Models
 
         public Train Clone()
         {
-            Train _t = new Train(this.firstTrainNum, this.secondTrainNum, this.startStation, this.stopStation, this.upOrDown, this.mainStation, this.newStations, this.shownInFiles);
+            Train _t = new Train(this.firstTrainNum, this.secondTrainNum, this.startStation, this.stopStation, this.upOrDown, this.mainStation, this.newStations, this.shownInFiles,this.hasNoUpOrDown);
             return _t;
         }
 
