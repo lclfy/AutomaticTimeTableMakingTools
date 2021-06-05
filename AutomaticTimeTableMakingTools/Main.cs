@@ -227,18 +227,22 @@ namespace AutomaticTimeTableMakingTools
                                     string[] _allStations = new string[] { "曹古寺", "二郎庙", "鸿宝", "郑州东京广场", "南曹", "寺后", "郑州东徐兰场", "郑开", "郑州南郑万场", "郑州东城际场", "郑州南城际场", "郑州东疏解区", "郑州东动车所", "郑州南动车所" };
                                     for (int ij = 0; ij < _allStations.Length; ij++)
                                     {
-                                        if (hasgot)
-                                        {
-                                            break;
-                                        }
                                         if ((titleName.Contains(_allStations[ij]) &&
                                                                  titleName.Contains("上行")) ||
                                                                 (titleName.Contains(_allStations[ij]) &&
                                                                 titleName.Contains("下行")))
                                         {
-                                            _timeTable.Title = _allStations[ij];
+                                            //表头与车站不符的特殊情况
+                                            if (titleName.Contains("郑开"))
+                                            {
+                                                _timeTable.Title = "宋城路";
+                                            }
+                                            else
+                                            {
+                                                _timeTable.Title = _allStations[ij];
+                                            }
                                             _timeTable.titleRow = i;
-                                            hasgot = true;
+                                            break;
                                         }
 
 
@@ -2760,6 +2764,7 @@ namespace AutomaticTimeTableMakingTools
             List<Train> _allTrains = allTrains_New;
 
             //给主站加上场，再根据各时刻表替换成各时刻表的站
+
             _allTrains = remarkStations(_allTrains);
 
             for (int i = 0; i < _distributedTimeTables.Count; i++)
@@ -2776,13 +2781,18 @@ namespace AutomaticTimeTableMakingTools
                     {
                         Station _station = _allTrains[j].Clone().newStations[_sCount];
                         Train _tempTrain = _allTrains[j].Clone();
-                        if (_station.stationName.Replace("线路所", "").Replace("站", "").Equals(mainStation))
+
+                        if (_station.stationName.Replace("线路所", "").Replace("站", "").Equals(mainStation) || _tempTrain.mainStation.stationName.Equals(mainStation))
                         {
-                            //把主站和当前站换一下
-                            Station _tempMainStation = _tempTrain.Clone().mainStation;
-                            _tempTrain.newStations.Add(_tempMainStation);
-                            _tempTrain.newStations.RemoveAt(_sCount);
-                            _tempTrain.mainStation = _station;
+                            //把主站和当前站换一下(如果主站是当前站就不换)
+                            if (!_tempTrain.mainStation.stationName.Equals(mainStation))
+                            {
+                                Station _tempMainStation = _tempTrain.Clone().mainStation;
+                                _tempTrain.newStations.Add(_tempMainStation);
+                                _tempTrain.newStations.RemoveAt(_sCount);
+                                _tempTrain.mainStation = _station;
+                            }
+
                             //特殊情况：动车所，包含“郑州东京广场，郑州东徐兰场，郑州东城际场”的为郑州东站，通过股道判断走行线，包含“郑州南郑万场，郑州南郑阜场，郑州南城际场”的为郑州南站
                             if(_station.stationName.Replace("线路所", "").Replace("站", "").Contains("东动车所"))
                             {
@@ -2834,8 +2844,15 @@ namespace AutomaticTimeTableMakingTools
                                 }
                             }
                             //特殊情况：如果是疏解区，圃田西->疏解区的在左边（上行），疏解区->圃田西的在右边（下行）
+                            //疏解区不能用一般情况添加上下行△
+                            bool _isSJQ = false;
                             if (_station.stationName.Replace("线路所", "").Replace("站", "").Contains("疏解区"))
                             {//找一下圃田西站
+                                _isSJQ = true;
+                                if (_tempTrain.firstTrainNum.Contains("G549"))
+                                {
+                                    int aa = 0;
+                                }
                                 Station _puTianXi = new Station();
                                 bool hasGot = false;
                                 for(int _ptxPlace = 0; _ptxPlace < _tempTrain.newStations.Count; _ptxPlace++)
@@ -2866,15 +2883,30 @@ namespace AutomaticTimeTableMakingTools
                                         _tempTrain.upOrDown = false;
                                     }
                                 }
+                                if (_tempTrain.upOrDown)
+                                {
+                                    _downTrains.Add(_tempTrain);
+                                }
+                                else
+                                {
+                                    _upTrains.Add(_tempTrain);
+                                }
                             }
                             //一般情况，添加上下行
-                            if (_allTrains[j].upOrDown)
+                            if (!_isSJQ)
                             {
-                                _downTrains.Add(_tempTrain);
-                            }
-                            else
-                            {
-                                _upTrains.Add(_tempTrain);
+                                if (mainStation.Contains("京广场"))
+                                {
+                                    int a = 0;
+                                }
+                                if (_allTrains[j].upOrDown)
+                                {
+                                    _downTrains.Add(_tempTrain);
+                                }
+                                else
+                                {
+                                    _upTrains.Add(_tempTrain);
+                                }
                             }
                         }
                         //特殊情况：马头岗徐兰场
@@ -2987,7 +3019,8 @@ namespace AutomaticTimeTableMakingTools
                 for (int _sCount = 0; _sCount < _allTrains[j].newStations.Count; _sCount++)
                 {
                     int mainTrackNum = 0;
-                    if (_allTrains[j].mainStation != null && _allTrains[j].mainStation.stationName.Equals("郑州东"))
+                    if (_allTrains[j].mainStation != null && (_allTrains[j].mainStation.stationName.Equals("郑州东") ||
+                        _allTrains[j].mainStation.stationName.Equals("郑州东站")))
                     {
                         if (_allTrains[j].mainStation.stationTrackNum.Equals("IX"))
                             mainTrackNum = 9;
@@ -3317,8 +3350,82 @@ namespace AutomaticTimeTableMakingTools
                                         break;
                                     }
                                     Train _train = _trains[counter];
-                                    //获取当前上下行时应该填写的车次
-                                    string trainNumber = returnCorrectUpOrDownNumber(_train, upOrDown);
+                                    //获取当前上下行时应该填写的车次，疏解区单独写
+                                    string trainNumber = "";
+                                    if (table.Title.Contains("疏解区"))
+                                    {//分为四种，->郑州东（双号），->二郎庙（单号），<-郑州东（单号），<-二郎庙（双号）
+                                        trainNumber = _train.firstTrainNum;
+                                        bool sjqUpOrDown = false;
+                                        if (upOrDown)
+                                        {
+                                            //下行（疏解区->圃田西）,<-郑州东（单号），<-二郎庙（双号）
+                                            for (int _stations = 0; _stations < _train.newStations.Count; _stations++)
+                                            {
+                                                if (_train.newStations[_stations].stationName.Contains("郑州东"))
+                                                {
+                                                    sjqUpOrDown = true;
+                                                    break;
+                                                }
+                                                if (_train.newStations[_stations].stationName.Contains("二郎庙"))
+                                                {
+                                                    sjqUpOrDown = false;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {//上行（圃田西->疏解区），->郑州东（双号），->二郎庙（单号）
+                                            for (int _stations = 0; _stations < _train.newStations.Count; _stations++)
+                                            {
+                                                if (_train.newStations[_stations].stationName.Contains("郑州东"))
+                                                {
+                                                    sjqUpOrDown = false;
+                                                    break;
+                                                }
+                                                if (_train.newStations[_stations].stationName.Contains("二郎庙"))
+                                                {
+                                                    sjqUpOrDown = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        if (_train.secondTrainNum != null && _train.secondTrainNum.Length != 0)
+                                        {
+                                            if (_train.secondTrainNum.Length != 0)
+                                            {
+                                                if (sjqUpOrDown)
+                                                {
+                                                    Char[] TrainWord = _train.firstTrainNum.ToCharArray();
+                                                    if (TrainWord[TrainWord.Length - 1] % 2 == 0)
+                                                    {//最后一位是偶数，则用奇数的那个
+                                                        trainNumber = _train.secondTrainNum;
+                                                    }
+                                                    else
+                                                    {
+                                                        trainNumber = _train.firstTrainNum;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    Char[] TrainWord = _train.firstTrainNum.ToCharArray();
+                                                    if (TrainWord[TrainWord.Length - 1] % 2 == 0)
+                                                    {
+                                                        trainNumber = _train.firstTrainNum;
+                                                    }
+                                                    else
+                                                    {
+                                                        trainNumber = _train.secondTrainNum;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    //其他的，用普通查找方法
+                                    else
+                                    {
+                                        trainNumber = returnCorrectUpOrDownNumber(_train, upOrDown);
+                                    }
+
                                     int targetColumn = 0;
                                     //车站的三个数据
                                     int stoppedColumn = 0;
@@ -3377,6 +3484,7 @@ namespace AutomaticTimeTableMakingTools
                                     //动车所不写
                                     if (!isEMUGarage)
                                     {
+
                                         if (findColumn(temp_TimeTableStations, "始发", i) != null)
                                         {
                                             currentStation = findColumn(temp_TimeTableStations, "始发", i);
@@ -3402,6 +3510,65 @@ namespace AutomaticTimeTableMakingTools
                                         }
                                         newRow.GetCell(targetColumn).CellStyle = startAndStop;
                                         newRow.GetCell(targetColumn).SetCellValue(_train.stopStation);
+                                    }
+                                    else
+                                    {//动车所写终到场
+                                     //找终点，只有单边有终到场，因此终点站为动车所的不填写即可
+                                        if (!_train.stopStation.Contains("动车所"))
+                                        {
+                                            if (findColumn(temp_TimeTableStations, "终到场", i) != null)
+                                            {
+                                                currentStation = findColumn(temp_TimeTableStations, "终到场", i);
+                                                targetColumn = currentStation.stationColumn;
+                                            }
+                                            //填写终到场
+                                            if (newRow.GetCell(targetColumn) == null)
+                                            {
+                                                newRow.CreateCell(targetColumn);
+                                            }
+                                            //把场找回来填到终到站里..原方法使用的是list，懒得改了
+                                            //当前找的是东所的，如果是南所另写
+                                            int mainTrackNum = 0;
+                                            if(_train.newStations.Count != 0 && (_train.stopStation.Equals("郑州东") || _train.stopStation.Equals("郑州东站")))
+                                            {
+                                                if (_train.newStations[0].stationTrackNum.Equals("IX"))
+                                                    mainTrackNum = 9;
+                                                if (_train.newStations[0].stationTrackNum.Equals("X"))
+                                                    mainTrackNum = 10;
+                                                if (_train.newStations[0].stationTrackNum.Equals("XVIII"))
+                                                    mainTrackNum = 18;
+                                                if (_train.newStations[0].stationTrackNum.Equals("XIX"))
+                                                    mainTrackNum = 19;
+                                                if (_train.newStations[0].stationTrackNum.Equals("XXV"))
+                                                    mainTrackNum = 25;
+                                                if (_train.newStations[0].stationTrackNum.Equals("XXVI"))
+                                                    mainTrackNum = 26;
+                                                if (_train.newStations[0].stationTrackNum.Equals("XXIX"))
+                                                    mainTrackNum = 29;
+                                                if (_train.newStations[0].stationTrackNum.Equals("XXX"))
+                                                    mainTrackNum = 30;
+                                                if (mainTrackNum == 0)
+                                                    int.TryParse(_train.newStations[0].stationTrackNum, out mainTrackNum);
+                                                if (mainTrackNum != 0)
+                                                {
+                                                    if (mainTrackNum >= 1 && mainTrackNum <= 16)
+                                                    {
+                                                        _train.stopStation = "京广场";
+                                                    }
+                                                    if (mainTrackNum >= 17 && mainTrackNum <= 20)
+                                                    {
+                                                        _train.stopStation = "城际场";
+                                                    }
+                                                    if (mainTrackNum >= 21 && mainTrackNum <= 30)
+                                                    {
+                                                        _train.stopStation = "徐兰场";
+                                                    }
+                                                }
+                                            }
+                                          
+                                            newRow.GetCell(targetColumn).CellStyle = startAndStop;
+                                            newRow.GetCell(targetColumn).SetCellValue(_train.stopStation);
+                                        }
                                     }
 
                                     //主站
@@ -3588,9 +3755,8 @@ namespace AutomaticTimeTableMakingTools
                         }
 
                         }
-                        /*重新修改文件指定单元格样式*/
-                        //空的加斜杠
-
+                    /*重新修改文件指定单元格样式*/
+                    //空的加斜杠，但动车所的表加空格
                         for(int i = 0; i <= sheet.LastRowNum; i++)
                         {
                         if(sheet.GetRow(i) != null)
@@ -3613,7 +3779,15 @@ namespace AutomaticTimeTableMakingTools
                                 {
                                     if (_row.GetCell(j).ToString().Trim().Length == 0)
                                     {
-                                        _row.GetCell(j).CellStyle = empty;
+                                        if (isEMUGarage)
+                                        {
+                                            _row.GetCell(j).CellStyle = startAndStop;
+                                        }
+                                        else
+                                        {
+                                            _row.GetCell(j).CellStyle = empty;
+                                        }
+
                                     }
                                 }
                             }
@@ -3684,6 +3858,10 @@ namespace AutomaticTimeTableMakingTools
                         continue;
                     }
                     */
+                    if (searchedName.Trim().Equals("郑州"))
+                    {
+                        continue;
+                    }
                     if (searchedName.Trim().Equals("郑州东动车所") && stationName.Equals("郑州东"))
                     {
                         continue;
