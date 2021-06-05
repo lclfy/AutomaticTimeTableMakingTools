@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CSkin">
+      <HintPath>CSkin 16.1.14.2\CSkin 2.0\CSkin.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>NPOI\Net20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>

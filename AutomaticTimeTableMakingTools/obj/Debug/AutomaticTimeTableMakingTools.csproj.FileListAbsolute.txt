@@ -92,3 +92,5 @@ D:\GitHub\AutomaticTimeTableMakingTools - 车间版\AutomaticTimeTableMakingTool
 \\Mac\Home\Documents\GitHub\Distributed_AutomaticTimeTableMakingTools\AutomaticTimeTableMakingTools\obj\Debug\AutomaticTimeTableMakingTools.csproj.CopyComplete
 \\Mac\Home\Documents\GitHub\Distributed_AutomaticTimeTableMakingTools\AutomaticTimeTableMakingTools\obj\Debug\AutomaticTimeTableMakingTools.exe
 \\Mac\Home\Documents\GitHub\Distributed_AutomaticTimeTableMakingTools\AutomaticTimeTableMakingTools\obj\Debug\AutomaticTimeTableMakingTools.pdb
+\\Mac\Home\Documents\GitHub\Distributed_AutomaticTimeTableMakingTools\AutomaticTimeTableMakingTools\bin\Debug\CSkin.dll
+\\Mac\Home\Documents\GitHub\Distributed_AutomaticTimeTableMakingTools\AutomaticTimeTableMakingTools\bin\Debug\CSkin.xml
