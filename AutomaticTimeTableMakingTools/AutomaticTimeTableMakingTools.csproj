@@ -68,6 +68,7 @@
     <Compile Include="Models\TrainFile.cs" />
     <Compile Include="Models\Station.cs" />
     <Compile Include="Models\Train.cs" />
+    <Compile Include="Models\upOrDown_Stations.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Main.resx">

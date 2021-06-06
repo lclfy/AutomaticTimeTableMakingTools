@@ -165,9 +165,9 @@
             this.label2.Location = new System.Drawing.Point(41, 392);
             this.label2.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(974, 31);
+            this.label2.Size = new System.Drawing.Size(983, 31);
             this.label2.TabIndex = 26;
-            this.label2.Text = "提示：使用子东版新临客时刻表时，将需要处理的表放在首个工作簿内或命名为“汇总表”";
+            this.label2.Text = "提示：使用子东版临客时刻表时，将需要使用的时刻表复制在新Excel文件内并放在首个标签";
             // 
             // Main
             // 

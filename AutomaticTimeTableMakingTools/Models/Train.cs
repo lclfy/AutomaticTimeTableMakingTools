@@ -14,8 +14,8 @@ namespace AutomaticTimeTableMakingTools.Models
         public string stopStation { get; set; }
         //上下行 true↓ false↑
         public bool upOrDown { get; set; }
-        //
-        public bool hasNoUpOrDown { get; set; }
+        //上下行都填写一份
+        public bool bothUpAndDown { get; set; }
         //主站标签，徐兰场/京广场/城际场等，用于填时刻表确定位置
         public Station mainStation { get; set; }
         public List<Station> newStations { get; set; }
@@ -29,7 +29,7 @@ namespace AutomaticTimeTableMakingTools.Models
             startStation = _startStation;
             stopStation = _stopStation;
             upOrDown = _upOrDown;
-            hasNoUpOrDown = false;
+            bothUpAndDown = false;
 
             if(_mainStation == null)
             {
@@ -62,7 +62,7 @@ namespace AutomaticTimeTableMakingTools.Models
 
         public Train Clone()
         {
-            Train _t = new Train(this.firstTrainNum, this.secondTrainNum, this.startStation, this.stopStation, this.upOrDown, this.mainStation, this.newStations, this.shownInFiles,this.hasNoUpOrDown);
+            Train _t = new Train(this.firstTrainNum, this.secondTrainNum, this.startStation, this.stopStation, this.upOrDown, this.mainStation, this.newStations, this.shownInFiles,this.bothUpAndDown);
             return _t;
         }
 
