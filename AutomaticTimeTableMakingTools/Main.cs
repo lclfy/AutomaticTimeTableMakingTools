@@ -240,7 +240,7 @@ namespace AutomaticTimeTableMakingTools
                                 }
                                 else if(_inputType == 1)
                                 {
-                                    string[] _allStations = new string[] { "曹古寺", "二郎庙", "鸿宝", "郑州东京广场", "南曹", "寺后", "郑州东徐兰场", "郑开", "郑州南郑万场", "郑州东城际场", "郑州南城际场", "郑州东疏解区", "郑州东动车所", "郑州南动车所" };
+                                    string[] _allStations = new string[] { "曹古寺", "二郎庙", "鸿宝", "郑州东京广场", "南曹", "寺后", "郑州东徐兰场", "郑开", "郑州南郑万场", "郑州东城际场", "郑州南城际场", "郑州东疏解区", "郑州东动车所", "郑州南动车所","新郑机场","周口东","民权北","兰考南","开封北","许昌北","许昌东","鄢陵","扶沟南","西华","淮阳南","沈丘北","长葛北","禹州","郏县" };
                                     for (int ij = 0; ij < _allStations.Length; ij++)
                                     {
                                         if ((titleName.Contains(_allStations[ij]) &&
@@ -2266,8 +2266,10 @@ namespace AutomaticTimeTableMakingTools
                             //特殊情况：如果是疏解区，圃田西->疏解区的在左边（上行），疏解区->圃田西的在右边（下行）
                             //疏解区不能用一般情况添加上下行△
                             bool _isSJQ = false;
-                            if (_station.stationName.Replace("线路所", "").Replace("站", "").Contains("疏解区"))
+                            if (_station.stationName.Replace("线路所", "").Replace("站", "").Contains("疏解区") &&
+                                (!mainStation.Contains("京广场") && !mainStation.Contains("郑州东城际场")&& !mainStation.Contains("二郎庙")))
                             {//找一下圃田西站
+                               
                                 _isSJQ = true;
                                 Station _puTianXi = new Station();
                                 bool hasGot = false;
@@ -2325,13 +2327,12 @@ namespace AutomaticTimeTableMakingTools
                                     {
                                         //发车点是时间
                                         //测试换向车
-                                        if ((_tempTrain.firstTrainNum.Equals("G7938") ||
-                                            _tempTrain.firstTrainNum.Equals("G7939")) &&
-                                            mainStation.Contains("徐兰场"))
+                                        if ((_tempTrain.firstTrainNum.Equals("D7872") ||
+                                            _tempTrain.firstTrainNum.Equals("D7873")))
                                         {
                                             int aaa = 0;
                                         }
-                                        if(Regex.IsMatch(_tempTrain.mainStation.startedTime.Replace("：",":"), @"[0-9]{2}(:)[0-9]{2}") ||
+                                        if(Regex.IsMatch(_tempTrain.mainStation.startedTime.Replace("：",":"), @"[0-9]{1}(:)[0-9]{2}") ||
                                             Regex.IsMatch(_tempTrain.mainStation.startedTime.Replace("：", ":"), @"[0-9]{2}(:)[0-9]{2}"))
                                         {
                                             int.TryParse(_tempTrain.mainStation.startedTime.Replace(":", ""), out mainTime);
@@ -2341,7 +2342,7 @@ namespace AutomaticTimeTableMakingTools
                                         _tempTrain.mainStation.stoppedTime.Length != 0)
                                     {
                                         //接车点是时间
-                                        if (Regex.IsMatch(_tempTrain.mainStation.stoppedTime.Replace("：", ":"), @"[0-9]{2}(:)[0-9]{2}") ||
+                                        if (Regex.IsMatch(_tempTrain.mainStation.stoppedTime.Replace("：", ":"), @"[0-9]{1}(:)[0-9]{2}") ||
                                             Regex.IsMatch(_tempTrain.mainStation.stoppedTime.Replace("：", ":"), @"[0-9]{2}(:)[0-9]{2}"))
                                         {
                                             int.TryParse(_tempTrain.mainStation.stoppedTime.Replace(":", ""), out mainTime);
@@ -2375,7 +2376,7 @@ namespace AutomaticTimeTableMakingTools
                                         //先找发车点
                                         if(_s.startedTime != null && _s.startedTime.Trim().Length != 0)
                                         {//先看是不是时间
-                                            if(Regex.IsMatch(_s.startedTime.Replace("：", ":"), @"[0-9]{2}(:)[0-9]{2}") ||
+                                            if(Regex.IsMatch(_s.startedTime.Replace("：", ":"), @"[0-9]{1}(:)[0-9]{2}") ||
                                             Regex.IsMatch(_s.startedTime.Replace("：", ":"), @"[0-9]{2}(:)[0-9]{2}"))
                                             {
                                                 int.TryParse(_s.startedTime.Replace(":", ""), out tempTime);
@@ -2385,7 +2386,7 @@ namespace AutomaticTimeTableMakingTools
                                         //再找接车点
                                         else if (_s.stoppedTime != null && _s.stoppedTime.Trim().Length != 0)
                                         {//先看是不是时间
-                                            if (Regex.IsMatch(_s.stoppedTime.Replace("：", ":"), @"[0-9]{2}(:)[0-9]{2}") ||
+                                            if (Regex.IsMatch(_s.stoppedTime.Replace("：", ":"), @"[0-9]{1}(:)[0-9]{2}") ||
                                             Regex.IsMatch(_s.stoppedTime.Replace("：", ":"), @"[0-9]{2}(:)[0-9]{2}"))
                                             {
                                                 int.TryParse(_s.startedTime.Replace(":", ""), out tempTime);
@@ -2527,7 +2528,7 @@ namespace AutomaticTimeTableMakingTools
                                 else
                                 {
                                     //普通添加
-                                    if (_allTrains[j].upOrDown)
+                                    if (_tempTrain.upOrDown)
                                     {
                                         _downTrains.Add(_tempTrain);
                                     }
@@ -2541,10 +2542,17 @@ namespace AutomaticTimeTableMakingTools
                         }
                         //特殊情况：马头岗徐兰场
                         else if(_station.stationName.Replace("线路所", "").Replace("站", "").Contains("马头岗") && mainStation.Contains("京广场"))
-                        {//如果这个车不经过京广场，添加进去
+                        {//如果这个车不经过京广场，添加进去（用徐兰的点在京广场当主站以便排序）
                             bool hasGet = false;
                             foreach(Station _s in _allTrains[j].newStations)
                             {
+                                if (_s.stationName.Contains("徐兰场"))
+                                {
+                                    _tempTrain.mainStation.stationName = "郑州东京广场";
+                                    _tempTrain.mainStation.startedTime = _s.startedTime;
+                                    _tempTrain.mainStation.stationTrackNum = _s.stationTrackNum;
+                                    _tempTrain.mainStation.stoppedTime = _s.stoppedTime;
+                                }
                                 if (_s.stationName.Contains("京广场"))
                                 {
                                     hasGet = true;
@@ -2569,6 +2577,13 @@ namespace AutomaticTimeTableMakingTools
                             bool hasGet = false;
                             foreach (Station _s in _allTrains[j].newStations)
                             {
+                                if (_s.stationName.Contains("京广场"))
+                                {
+                                    _tempTrain.mainStation.stationName = "郑州东徐兰场";
+                                    _tempTrain.mainStation.startedTime = _s.startedTime;
+                                    _tempTrain.mainStation.stationTrackNum = _s.stationTrackNum;
+                                    _tempTrain.mainStation.stoppedTime = _s.stoppedTime;
+                                }
                                 if (_s.stationName.Contains("徐兰场"))
                                 {
                                     hasGet = true;
@@ -2593,6 +2608,13 @@ namespace AutomaticTimeTableMakingTools
                             bool hasGet = false;
                             foreach (Station _s in _allTrains[j].newStations)
                             {
+                                if (_s.stationName.Contains("京广场"))
+                                {
+                                    _tempTrain.mainStation.stationName = "郑州东徐兰场";
+                                    _tempTrain.mainStation.startedTime = _s.startedTime;
+                                    _tempTrain.mainStation.stationTrackNum = _s.stationTrackNum;
+                                    _tempTrain.mainStation.stoppedTime = _s.stoppedTime;
+                                }
                                 if (_s.stationName.Contains("徐兰场"))
                                 {
                                     hasGet = true;
@@ -2866,15 +2888,15 @@ namespace AutomaticTimeTableMakingTools
                     {
                         isEMUGarage = true;
                     }
-                    //如果总行数小于车次最多的一列+5的话，创建行直到那么多为止，再顺便创建所有的cell
-                    int lastRowNumber = 5;
+                    //如果总行数小于车次最多的一列+4的话，创建行直到那么多为止，再顺便创建所有的cell
+                    int lastRowNumber = 4;
                     if (table.upTrains.Count > table.downTrains.Count)
                     {
-                        lastRowNumber = table.upTrains.Count + 5;
+                        lastRowNumber = table.upTrains.Count + 4;
                     }
                     else
                     {
-                        lastRowNumber = table.downTrains.Count + 5;
+                        lastRowNumber = table.downTrains.Count + 4;
                     }
                     if (sheet.LastRowNum < lastRowNumber)
                     {
@@ -3432,18 +3454,21 @@ namespace AutomaticTimeTableMakingTools
                         }
                     /*重新修改文件指定单元格样式*/
                     //空的加斜杠，但动车所的表加空格
-                        for(int i = 0; i <= sheet.LastRowNum; i++)
+                        for(int i = 0; i <= lastRowNumber; i++)
                         {
                         if(sheet.GetRow(i) != null)
                         {
                             IRow _row = sheet.GetRow(i);
+                            /*
                             if(_row.GetCell(1) == null)
                             {
                                 continue;
-                            }else if(_row.GetCell(1).ToString().Trim().Length == 0)
+                            }
+                            if(_row.GetCell(1).ToString().Trim().Length == 0)
                             {
                                 continue;
                             }
+                            */
                             for (int j = 0; j < _stopColumn; j++)
                             {
                                 if(_row.GetCell(j) == null)
