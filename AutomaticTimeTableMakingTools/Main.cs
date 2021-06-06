@@ -2636,6 +2636,10 @@ namespace AutomaticTimeTableMakingTools
                 }
                 _distributedTimeTables[i].upTrains = _upTrains;
                 _distributedTimeTables[i].downTrains = _downTrains;
+                if (_distributedTimeTables[i].Title.Contains("京广场"))
+                {
+                    int aa = 0;
+                }
                 _distributedTimeTables[i].upTrains.Sort();
                 _distributedTimeTables[i].downTrains.Sort();
 
@@ -3369,7 +3373,14 @@ namespace AutomaticTimeTableMakingTools
                                                     {//如果是只显示一个时间(只显示“到达”)，但是又要都显示上时间的话（不能显示“通过”）
                                                         stoppedTime = _station.startedTime;
                                                     }
-                                                    newRow.GetCell(currentStation.stoppedTimeColumn).CellStyle = standard;
+                                                    if (_station.stoppedTime.Contains("改"))
+                                                    {
+                                                        newRow.GetCell(currentStation.stoppedTimeColumn).CellStyle = continuedTrainCell;
+                                                    }
+                                                    else
+                                                    {
+                                                        newRow.GetCell(currentStation.stoppedTimeColumn).CellStyle = standard;
+                                                    }
                                                     newRow.GetCell(currentStation.stoppedTimeColumn).SetCellValue(stoppedTime);
                                                 }
                                             }
@@ -3387,7 +3398,14 @@ namespace AutomaticTimeTableMakingTools
                                                     {//如果是只显示一个时间(只显示“发出”)，但是又要都显示上时间的话（不能显示“终到”）
                                                         startedTime = _station.stoppedTime;
                                                     }
-                                                    newRow.GetCell(currentStation.startedTimeColumn).CellStyle = standard;
+                                                    if (_station.startedTime.Contains("续"))
+                                                    {
+                                                        newRow.GetCell(currentStation.startedTimeColumn).CellStyle = continuedTrainCell;
+                                                    }
+                                                    else
+                                                    {
+                                                        newRow.GetCell(currentStation.startedTimeColumn).CellStyle = standard;
+                                                    }
                                                     newRow.GetCell(currentStation.startedTimeColumn).SetCellValue(addColonToStartTime(startedTime));
                                                 }
                                             }

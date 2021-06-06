@@ -89,7 +89,7 @@ namespace AutomaticTimeTableMakingTools.Models
             }
             else
             {
-                thisStartedTime = mainStation.startedTime;
+                thisStartedTime = mainStation.startedTime.Replace(":", "").Trim();
             }
             if (reg.IsMatch(otherTrain.mainStation.startedTime))
             {
@@ -97,7 +97,7 @@ namespace AutomaticTimeTableMakingTools.Models
             }
             else
             {
-                otherStartedTime = otherTrain.mainStation.startedTime;
+                otherStartedTime = otherTrain.mainStation.startedTime.Replace(":", "").Trim();
             }
 
             if (mainStation == null || otherTrain.mainStation == null)

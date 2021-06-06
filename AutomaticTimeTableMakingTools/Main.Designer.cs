@@ -96,7 +96,7 @@
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(257, 41);
             this.label6.TabIndex = 20;
-            this.label6.Text = "Build 20210605";
+            this.label6.Text = "Build 20210606";
             // 
             // label7
             // 
@@ -138,9 +138,7 @@
             this.modeSelect_cb.FormattingEnabled = true;
             this.modeSelect_cb.Items.AddRange(new object[] {
             "①路局表(每趟单独显示)",
-            "②技术科-子东临客表(新)",
-            "③技术科-传统线路分表",
-            "④路局表(多车合并显示)"});
+            "②技术科-子东版时刻表(新)"});
             this.modeSelect_cb.Location = new System.Drawing.Point(31, 152);
             this.modeSelect_cb.Name = "modeSelect_cb";
             this.modeSelect_cb.Size = new System.Drawing.Size(321, 39);
@@ -165,9 +163,9 @@
             this.label2.Location = new System.Drawing.Point(41, 392);
             this.label2.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(983, 31);
+            this.label2.Size = new System.Drawing.Size(935, 31);
             this.label2.TabIndex = 26;
-            this.label2.Text = "提示：使用子东版临客时刻表时，将需要使用的时刻表复制在新Excel文件内并放在首个标签";
+            this.label2.Text = "提示：使用子东版时刻表时，将需要使用的时刻表复制在新Excel文件内并放在首个标签";
             // 
             // Main
             // 
