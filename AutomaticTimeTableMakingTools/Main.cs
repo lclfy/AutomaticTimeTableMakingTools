@@ -2571,7 +2571,7 @@ namespace AutomaticTimeTableMakingTools
                                 }
                             }
                         }
-                        //特殊情况：鸿宝京广场
+                        //特殊情况：鸿宝京广场在徐兰场添加
                         else if (_station.stationName.Replace("线路所", "").Replace("站", "").Contains("鸿宝") && mainStation.Contains("徐兰场"))
                         {//如果这个车不经过徐兰场，添加进去
                             bool hasGet = false;
@@ -2602,20 +2602,52 @@ namespace AutomaticTimeTableMakingTools
                                 }
                             }
                         }
-                        //特殊情况：曹古寺京广场
-                        else if (_station.stationName.Replace("线路所", "").Replace("站", "").Contains("曹古寺") && mainStation.Contains("徐兰场"))
-                        {//如果这个车不经过徐兰场，添加进去
+                        //特殊情况：京广场文苑南路在城际场添加
+                        
+                        else if (_station.stationName.Replace("线路所", "").Replace("站", "").Contains("文苑南路") && mainStation.Contains("郑州东城际场"))
+                        {//如果这个车不经过城际场，添加进去
                             bool hasGet = false;
                             foreach (Station _s in _allTrains[j].newStations)
                             {
                                 if (_s.stationName.Contains("京广场"))
                                 {
-                                    _tempTrain.mainStation.stationName = "郑州东徐兰场";
+                                    _tempTrain.mainStation.stationName = "郑州东城际场";
                                     _tempTrain.mainStation.startedTime = _s.startedTime;
                                     _tempTrain.mainStation.stationTrackNum = _s.stationTrackNum;
                                     _tempTrain.mainStation.stoppedTime = _s.stoppedTime;
                                 }
-                                if (_s.stationName.Contains("徐兰场"))
+                                if (_s.stationName.Contains("郑州东城际场"))
+                                {
+                                    hasGet = true;
+                                    break;
+                                }
+                            }
+                            if (hasGet == false)
+                            {
+                                if (_allTrains[j].upOrDown)
+                                {
+                                    _downTrains.Add(_tempTrain);
+                                }
+                                else
+                                {
+                                    _upTrains.Add(_tempTrain);
+                                }
+                            }
+                        }
+                        //城际场疏解区在京广场添加
+                        else if (_station.stationName.Replace("线路所", "").Replace("站", "").Contains("疏解区") && mainStation.Contains("京广场"))
+                        {//如果这个车不经过京广场，添加进去
+                            bool hasGet = false;
+                            foreach (Station _s in _allTrains[j].newStations)
+                            {
+                                if (_s.stationName.Contains("郑州东城际场"))
+                                {
+                                    _tempTrain.mainStation.stationName = "郑州东京广场";
+                                    _tempTrain.mainStation.startedTime = _s.startedTime;
+                                    _tempTrain.mainStation.stationTrackNum = _s.stationTrackNum;
+                                    _tempTrain.mainStation.stoppedTime = _s.stoppedTime;
+                                }
+                                if (_s.stationName.Contains("京广场"))
                                 {
                                     hasGet = true;
                                     break;
@@ -3497,7 +3529,7 @@ namespace AutomaticTimeTableMakingTools
                         try
                         {
                             FileStream file = new FileStream(table.fileName.Replace(table.fileName.Split('\\')[table.fileName.Split('\\').Length - 1], "处理后-"+table.fileName.Split('\\')[table.fileName.Split('\\').Length - 1]) , FileMode.Create);
-                            //System.Diagnostics.Process.Start("explorer.exe", table.fileName.Replace(table.fileName.Split('\\')[table.fileName.Split('\\').Length - 1], "处理后-" + table.fileName.Split('\\')[table.fileName.Split('\\').Length - 1]));
+
                             workbook.Write(file);
 
                             file.Close();
@@ -3679,6 +3711,15 @@ namespace AutomaticTimeTableMakingTools
                     }
                 }
                 MessageBox.Show("处理完成","提示",MessageBoxButtons.OK,MessageBoxIcon.Information);
+                try
+                {
+                    //System.Diagnostics.Process.Start("explorer.exe", allDistributedTimeTables[0].fileName.Split('\\')[allDistributedTimeTables[0].fileName.Split('\\').Length - 1]);
+                }
+                catch(Exception exx)
+                {
+
+                }
+
             }
             else
             {

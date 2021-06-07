@@ -83,7 +83,7 @@ namespace AutomaticTimeTableMakingTools.Models
             string thisStartedTime = "";
             string otherStartedTime = "";
             Regex reg = new Regex(@"[\u4e00-\u9fa5]");
-            if (reg.IsMatch(mainStation.startedTime))
+            if (reg.IsMatch(mainStation.startedTime) || mainStation.startedTime.Contains("--"))
             {//有中文，则有接续
                 thisStartedTime = mainStation.stoppedTime.Replace(":", "").Trim();
             }
@@ -91,7 +91,7 @@ namespace AutomaticTimeTableMakingTools.Models
             {
                 thisStartedTime = mainStation.startedTime.Replace(":", "").Trim();
             }
-            if (reg.IsMatch(otherTrain.mainStation.startedTime))
+            if (reg.IsMatch(otherTrain.mainStation.startedTime) || otherTrain.mainStation.startedTime.Contains("--"))
             {
                 otherStartedTime = otherTrain.mainStation.stoppedTime.Replace(":", "").Trim();
             }
