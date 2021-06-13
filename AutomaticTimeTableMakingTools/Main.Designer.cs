@@ -138,7 +138,7 @@
             this.modeSelect_cb.FormattingEnabled = true;
             this.modeSelect_cb.Items.AddRange(new object[] {
             "①路局表(每趟单独显示)",
-            "②技术科-子东版时刻表(新)"});
+            "②技术科新时刻表"});
             this.modeSelect_cb.Location = new System.Drawing.Point(31, 152);
             this.modeSelect_cb.Name = "modeSelect_cb";
             this.modeSelect_cb.Size = new System.Drawing.Size(321, 39);
@@ -165,7 +165,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(935, 31);
             this.label2.TabIndex = 26;
-            this.label2.Text = "提示：使用子东版时刻表时，将需要使用的时刻表复制在新Excel文件内并放在首个标签";
+            this.label2.Text = "提示：使用技术科时刻表时，将需要使用的时刻表复制在新Excel文件内并放在首个标签";
             // 
             // Main
             // 

@@ -2665,15 +2665,57 @@ namespace AutomaticTimeTableMakingTools
                                 }
                             }
                         }
+                        //阎块线路所在寺后添加
+                        else if (_station.stationName.Replace("线路所", "").Replace("站", "").Contains("阎块") && mainStation.Contains("寺后"))
+                        {
+                            bool hasGet = false;
+                            foreach (Station _s in _allTrains[j].newStations)
+                            {
+                                if (_s.stationName.Contains("阎块"))
+                                {
+                                    _tempTrain.mainStation.stationName = "寺后";
+                                    _tempTrain.mainStation.startedTime = _s.startedTime;
+                                    _tempTrain.mainStation.stationTrackNum = _s.stationTrackNum;
+                                    _tempTrain.mainStation.stoppedTime = _s.stoppedTime;
+                                }
+                                if (_s.stationName.Contains("寺后"))
+                                {
+                                    hasGet = true;
+                                    break;
+                                }
+                            }
+                            if (hasGet == false)
+                            {
+                                if (_allTrains[j].upOrDown)
+                                {
+                                    _downTrains.Add(_tempTrain);
+                                }
+                                else
+                                {
+                                    _upTrains.Add(_tempTrain);
+                                }
+                            }
+                        }
                         //特殊情况：东动车所城际场
                         else if (_station.stationName.Equals("郑州东动车所") && mainStation.Contains("徐兰场"))
                         {
-                            if(_station.stationTrackNum.Equals("17") ||
-                                _station.stationTrackNum.Equals("18") ||
-                                _station.stationTrackNum.Equals("19") ||
-                                _station.stationTrackNum.Equals("20") ||
-                                _station.stationTrackNum.Equals("XVIII") ||
-                                _station.stationTrackNum.Equals("XIX"))
+                            bool hasGet = false;
+                            foreach (Station _s in _allTrains[j].newStations)
+                            {
+                                if (_s.stationName.Contains("郑州东城际场"))
+                                {
+                                    _tempTrain.mainStation.stationName = "郑州东徐兰场";
+                                    _tempTrain.mainStation.startedTime = _s.startedTime;
+                                    _tempTrain.mainStation.stationTrackNum = _s.stationTrackNum;
+                                    _tempTrain.mainStation.stoppedTime = _s.stoppedTime;
+                                }
+                                if (_s.stationName.Contains("郑州东徐兰场"))
+                                {
+                                    hasGet = true;
+                                    break;
+                                }
+                            }
+                            if (hasGet == false)
                             {
                                 if (_allTrains[j].upOrDown)
                                 {
@@ -2690,10 +2732,6 @@ namespace AutomaticTimeTableMakingTools
                 }
                 _distributedTimeTables[i].upTrains = _upTrains;
                 _distributedTimeTables[i].downTrains = _downTrains;
-                if (_distributedTimeTables[i].Title.Contains("京广场"))
-                {
-                    int aa = 0;
-                }
                 _distributedTimeTables[i].upTrains.Sort();
                 _distributedTimeTables[i].downTrains.Sort();
 
