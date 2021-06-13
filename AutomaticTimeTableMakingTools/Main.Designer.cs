@@ -39,6 +39,7 @@
             this.modeSelect_cb = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.process_lbl = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // ImportNewTimeTable_btn
@@ -96,7 +97,7 @@
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(257, 41);
             this.label6.TabIndex = 20;
-            this.label6.Text = "Build 20210606";
+            this.label6.Text = "Build 20210613";
             // 
             // label7
             // 
@@ -167,11 +168,20 @@
             this.label2.TabIndex = 26;
             this.label2.Text = "提示：使用技术科时刻表时，将需要使用的时刻表复制在新Excel文件内并放在首个标签";
             // 
+            // process_lbl
+            // 
+            this.process_lbl.AutoSize = true;
+            this.process_lbl.Location = new System.Drawing.Point(784, 330);
+            this.process_lbl.Name = "process_lbl";
+            this.process_lbl.Size = new System.Drawing.Size(0, 24);
+            this.process_lbl.TabIndex = 28;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1036, 625);
+            this.Controls.Add(this.process_lbl);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.modeSelect_cb);
@@ -205,6 +215,7 @@
         private System.Windows.Forms.ComboBox modeSelect_cb;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label process_lbl;
     }
 }
 

@@ -2634,10 +2634,10 @@ namespace AutomaticTimeTableMakingTools
                                 }
                             }
                         }
-                        //城际场疏解区在京广场添加
+                        //城际场去疏解区在京广场添加
                         else if (_station.stationName.Replace("线路所", "").Replace("站", "").Contains("疏解区") && mainStation.Contains("京广场"))
-                        {//如果这个车不经过京广场，添加进去
-                            bool hasGet = false;
+                        {//如果这个车不经过京广场，添加进去（没经过城际场的不添加
+                            int hasGet = 0;
                             foreach (Station _s in _allTrains[j].newStations)
                             {
                                 if (_s.stationName.Contains("郑州东城际场"))
@@ -2646,14 +2646,18 @@ namespace AutomaticTimeTableMakingTools
                                     _tempTrain.mainStation.startedTime = _s.startedTime;
                                     _tempTrain.mainStation.stationTrackNum = _s.stationTrackNum;
                                     _tempTrain.mainStation.stoppedTime = _s.stoppedTime;
+                                    hasGet = 1;
                                 }
-                                if (_s.stationName.Contains("京广场"))
+                            }
+                            foreach(Station _s1 in _allTrains[j].newStations)
+                            {
+                                if (_s1.stationName.Contains("京广场"))
                                 {
-                                    hasGet = true;
+                                    hasGet = 0;
                                     break;
                                 }
                             }
-                            if (hasGet == false)
+                            if (hasGet == 1)
                             {
                                 if (_allTrains[j].upOrDown)
                                 {
@@ -2699,9 +2703,21 @@ namespace AutomaticTimeTableMakingTools
                         //特殊情况：东动车所城际场
                         else if (_station.stationName.Equals("郑州东动车所") && mainStation.Contains("徐兰场"))
                         {
-                            bool hasGet = false;
+                            int hasGet = 0;
+                            foreach(Station _s1 in _allTrains[j].newStations)
+                            {
+                                if (_s1.stationName.Contains("京广"))
+                                {
+                                    hasGet = -1;
+                                    break;
+                                }
+                            }
                             foreach (Station _s in _allTrains[j].newStations)
                             {
+                                if(hasGet == -1)
+                                {
+                                    break;
+                                }
                                 if (_s.stationName.Contains("郑州东城际场"))
                                 {
                                     _tempTrain.mainStation.stationName = "郑州东徐兰场";
@@ -2711,11 +2727,10 @@ namespace AutomaticTimeTableMakingTools
                                 }
                                 if (_s.stationName.Contains("郑州东徐兰场"))
                                 {
-                                    hasGet = true;
-                                    break;
+                                    hasGet = 1;
                                 }
                             }
-                            if (hasGet == false)
+                            if (hasGet == 0)
                             {
                                 if (_allTrains[j].upOrDown)
                                 {
@@ -2823,7 +2838,7 @@ namespace AutomaticTimeTableMakingTools
                             {
                                 _allTrains[j].mainStation.stationName = "郑州东城际场";
                             }
-                            if (mainTrackNum >= 21 && mainTrackNum <= 30)
+                            if (mainTrackNum >= 21 && mainTrackNum <= 32)
                             {
                                 _allTrains[j].mainStation.stationName = "郑州东徐兰场";
                             }
@@ -3045,64 +3060,69 @@ namespace AutomaticTimeTableMakingTools
                                     for (int tt = t + 1; tt < _trains.Count; tt++)
                                     {
                                         _secondTrain = _trains[tt];
-                                        if (_firstTrain.secondTrainNum.Length != 0 && _secondTrain.secondTrainNum.Length != 0)
+                                        if(_firstTrain.secondTrainNum != null && _secondTrain.secondTrainNum!=null)
                                         {
-                                            if (_firstTrain.firstTrainNum.Equals(_secondTrain.firstTrainNum) ||
-                                                _firstTrain.firstTrainNum.Equals(_secondTrain.secondTrainNum) ||
-                                                _firstTrain.secondTrainNum.Equals(_secondTrain.firstTrainNum) ||
-                                                _firstTrain.secondTrainNum.Equals(_secondTrain.secondTrainNum))
-                                            {//如果车号相同的话，2的元素给1，把2删除
-                                                int _sCount = _secondTrain.newStations.Count;
-                                                for (int s = 0; s < _sCount; s++)
-                                                {
-                                                    Station _s = new Station();
-                                                    _s.stationName = _secondTrain.newStations[s].stationName;
-                                                    _s.startedTime = _secondTrain.newStations[s].startedTime;
-                                                    _s.stoppedTime = _secondTrain.newStations[s].stoppedTime;
-                                                    _s.stationType = _secondTrain.newStations[s].stationType;
-                                                    _s.stationTrackNum = _secondTrain.newStations[s].stationTrackNum;
-                                                    Station _ss = new Station();
-                                                    _ss = _s;
-                                                    _firstTrain.newStations.Add(_ss);
-                                                }
-                                                _trains.RemoveAt(tt);
-                                                tt--;
-                                            }
-                                        }
-                                        else if (_firstTrain.secondTrainNum.Length == 0 && _secondTrain.secondTrainNum.Length == 0)
-                                        {//如果两个车相同，要么都有两个车号，要么都有一个车号
-                                            if (_firstTrain.firstTrainNum.Equals(_secondTrain.firstTrainNum))
+                                            if (_firstTrain.secondTrainNum.Length != 0 && _secondTrain.secondTrainNum.Length != 0)
                                             {
-                                                /*
-                                                for(int ij = 0; ij < _secondTrain.newStations.Count; ij++)
-                                                {
-                                                    Station _s = _secondTrain.newStations[ij];
-                                                    Station _ss = new Station();
-                                                    _ss = _s;
-                                                    _firstTrain.newStations.Add(_ss);
-                                                }
-                                                */
-                                                foreach (Station _s in _secondTrain.newStations)
-                                                {
-                                                    Station _ss = new Station();
-                                                    _ss = _s;
-                                                    bool hasEqual = false;
-                                                    foreach (Station _s1 in _firstTrain.newStations)
+                                                if (_firstTrain.firstTrainNum.Equals(_secondTrain.firstTrainNum) ||
+                                                    _firstTrain.firstTrainNum.Equals(_secondTrain.secondTrainNum) ||
+                                                    _firstTrain.secondTrainNum.Equals(_secondTrain.firstTrainNum) ||
+                                                    _firstTrain.secondTrainNum.Equals(_secondTrain.secondTrainNum))
+                                                {//如果车号相同的话，2的元素给1，把2删除
+                                                    int _sCount = _secondTrain.newStations.Count;
+                                                    for (int s = 0; s < _sCount; s++)
                                                     {
-                                                        if (_s1.stationName.Trim().Equals(_s.stationName))
-                                                        {
-                                                            hasEqual = true;
-                                                        }
-                                                    }
-                                                    if (!hasEqual)
-                                                    {
+                                                        Station _s = new Station();
+                                                        _s.stationName = _secondTrain.newStations[s].stationName;
+                                                        _s.startedTime = _secondTrain.newStations[s].startedTime;
+                                                        _s.stoppedTime = _secondTrain.newStations[s].stoppedTime;
+                                                        _s.stationType = _secondTrain.newStations[s].stationType;
+                                                        _s.stationTrackNum = _secondTrain.newStations[s].stationTrackNum;
+                                                        Station _ss = new Station();
+                                                        _ss = _s;
                                                         _firstTrain.newStations.Add(_ss);
                                                     }
+                                                    _trains.RemoveAt(tt);
+                                                    tt--;
                                                 }
-                                                _trains.RemoveAt(tt);
-                                                tt--;
                                             }
+                                            else if (_firstTrain.secondTrainNum.Length == 0 && _secondTrain.secondTrainNum.Length == 0)
+                                            {//如果两个车相同，要么都有两个车号，要么都有一个车号
+                                                if (_firstTrain.firstTrainNum.Equals(_secondTrain.firstTrainNum))
+                                                {
+                                                    /*
+                                                    for(int ij = 0; ij < _secondTrain.newStations.Count; ij++)
+                                                    {
+                                                        Station _s = _secondTrain.newStations[ij];
+                                                        Station _ss = new Station();
+                                                        _ss = _s;
+                                                        _firstTrain.newStations.Add(_ss);
+                                                    }
+                                                    */
+                                                    foreach (Station _s in _secondTrain.newStations)
+                                                    {
+                                                        Station _ss = new Station();
+                                                        _ss = _s;
+                                                        bool hasEqual = false;
+                                                        foreach (Station _s1 in _firstTrain.newStations)
+                                                        {
+                                                            if (_s1.stationName.Trim().Equals(_s.stationName))
+                                                            {
+                                                                hasEqual = true;
+                                                            }
+                                                        }
+                                                        if (!hasEqual)
+                                                        {
+                                                            _firstTrain.newStations.Add(_ss);
+                                                        }
+                                                    }
+                                                    _trains.RemoveAt(tt);
+                                                    tt--;
+                                                }
+                                            }
+
                                         }
+
                                     }
                                 }
 
@@ -3298,7 +3318,7 @@ namespace AutomaticTimeTableMakingTools
                                                     {
                                                         _train.stopStation = "城际场";
                                                     }
-                                                    if (mainTrackNum >= 21 && mainTrackNum <= 30)
+                                                    if (mainTrackNum >= 21 && mainTrackNum <= 32)
                                                     {
                                                         _train.stopStation = "徐兰场";
                                                     }
@@ -3704,9 +3724,12 @@ namespace AutomaticTimeTableMakingTools
 
         private void getTrains_btn_Click(object sender, EventArgs e)
         {
-            if(NewTimeTablesWorkbooks != null && DistributedTimeTableWorkbooks != null)
+            process_lbl.Text = "正在处理…";
+            if (NewTimeTablesWorkbooks != null && DistributedTimeTableWorkbooks != null)
             {
+
                 allTrains_New = new List<Train>();
+
                 List<TimeTable> _dt = GetStationsFromCurrentTables(DistributedTimeTableWorkbooks, allDistributedTimeTables, 1);
                 if (_dt != null)
                 {
@@ -3749,6 +3772,7 @@ namespace AutomaticTimeTableMakingTools
                     }
                 }
                 MessageBox.Show("处理完成","提示",MessageBoxButtons.OK,MessageBoxIcon.Information);
+                process_lbl.Text = " ";
                 try
                 {
                     //System.Diagnostics.Process.Start("explorer.exe", allDistributedTimeTables[0].fileName.Split('\\')[allDistributedTimeTables[0].fileName.Split('\\').Length - 1]);

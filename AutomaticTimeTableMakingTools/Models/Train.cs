@@ -21,6 +21,20 @@ namespace AutomaticTimeTableMakingTools.Models
         public List<Station> newStations { get; set; }
         public List<TrainFile> shownInFiles { get; set; }
 
+        public Train()
+        {
+            firstTrainNum = "";
+            secondTrainNum = "";
+            startStation = "";
+            stopStation = "";
+            upOrDown = false;
+            bothUpAndDown = false;
+            mainStation = new Station();
+            newStations = new List<Station>();
+            shownInFiles = new List<TrainFile>();
+                
+        }
+
         public Train(string _firstTrainNum = "", string _secondTrainNum = "", string _startStation = "",
                                 string _stopStation = "", bool _upOrDown = false, Station _mainStation = null, List<Station> _newStations = null, List<TrainFile> _shownInFiles = null, bool hasNoUpOrDown = false)
         {
