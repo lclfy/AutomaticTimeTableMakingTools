@@ -427,15 +427,15 @@ namespace AutomaticTimeTableMakingTools
                     ISheet sheet = workbook.GetSheetAt(i);
                     IRow row;
                     //表头数据
-                    int[] _startStationRaw = new int[10];
-                    int[] _stopStationRaw = new int[10];
+                    int[] _startStationRaw = new int[50];
+                    int[] _stopStationRaw = new int[50];
                     int trainRawCounter = 0;
-                    int[] _trainRawNum = new int[10];
+                    int[] _trainRawNum = new int[50];
                     int titleColumn = 0;
                     //已经找到，不再继续找
                     //bool shouldContinue = true;
                     //上行双数false 下行单数true
-                    bool[] upOrDown = new bool[10];
+                    bool[] upOrDown = new bool[50];
                     for (int j = 0; j < sheet.LastRowNum; j++)
                     {//找表头数据
                         row = sheet.GetRow(j);
