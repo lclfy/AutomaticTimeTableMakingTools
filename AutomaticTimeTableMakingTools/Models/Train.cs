@@ -12,8 +12,9 @@ namespace AutomaticTimeTableMakingTools.Models
         //始发A-B终到
         public string startStation { get; set; }
         public string stopStation { get; set; }
-        //上下行 true↓ false↑
+        //上下行 true↓ false↑(折角车显示折角前方向)
         public bool upOrDown { get; set; }
+        public int upOrDownBeforeTurnAround { get; set; }
         //上下行都填写一份
         public bool bothUpAndDown { get; set; }
         //主站标签，徐兰场/京广场/城际场等，用于填时刻表确定位置
@@ -29,6 +30,7 @@ namespace AutomaticTimeTableMakingTools.Models
             stopStation = "";
             upOrDown = false;
             bothUpAndDown = false;
+            upOrDownBeforeTurnAround = -1;
             mainStation = new Station();
             newStations = new List<Station>();
             shownInFiles = new List<TrainFile>();
@@ -36,14 +38,15 @@ namespace AutomaticTimeTableMakingTools.Models
         }
 
         public Train(string _firstTrainNum = "", string _secondTrainNum = "", string _startStation = "",
-                                string _stopStation = "", bool _upOrDown = false, Station _mainStation = null, List<Station> _newStations = null, List<TrainFile> _shownInFiles = null, bool hasNoUpOrDown = false)
+                                string _stopStation = "", bool _upOrDown = false, Station _mainStation = null, List<Station> _newStations = null, List<TrainFile> _shownInFiles = null, bool _bothUpAndDown = false,int _beforeTurnAround=-1)
         {
             firstTrainNum = _firstTrainNum;
             secondTrainNum = _secondTrainNum;
             startStation = _startStation;
             stopStation = _stopStation;
             upOrDown = _upOrDown;
-            bothUpAndDown = false;
+            bothUpAndDown = _bothUpAndDown;
+            upOrDownBeforeTurnAround = _beforeTurnAround;
 
             if(_mainStation == null)
             {
@@ -51,7 +54,7 @@ namespace AutomaticTimeTableMakingTools.Models
             }
             else
             {
-                mainStation = _mainStation;
+                mainStation = new Station(_mainStation);
             }
 
             if (_newStations == null)
@@ -60,7 +63,12 @@ namespace AutomaticTimeTableMakingTools.Models
             }
             else
             {
-                newStations = _newStations;
+                List<Station> _tempStation = new List<Station>();
+                foreach(Station _s in _newStations)
+                {
+                    _tempStation.Add(new Station(_s));
+                }
+                newStations = _tempStation;
             }
 
             if (_shownInFiles == null)
@@ -76,7 +84,7 @@ namespace AutomaticTimeTableMakingTools.Models
 
         public Train Clone()
         {
-            Train _t = new Train(this.firstTrainNum, this.secondTrainNum, this.startStation, this.stopStation, this.upOrDown, this.mainStation, this.newStations, this.shownInFiles,this.bothUpAndDown);
+            Train _t = new Train(this.firstTrainNum, this.secondTrainNum, this.startStation, this.stopStation, this.upOrDown, this.mainStation, this.newStations, this.shownInFiles,this.bothUpAndDown,this.upOrDownBeforeTurnAround);
             return _t;
         }
 
