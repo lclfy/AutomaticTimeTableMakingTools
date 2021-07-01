@@ -12,8 +12,11 @@ namespace AutomaticTimeTableMakingTools.Models
         //始发A-B终到
         public string startStation { get; set; }
         public string stopStation { get; set; }
-        //上下行 true↓ false↑
+        //上下行 true↓ false↑(折角车显示折角前方向)
         public bool upOrDown { get; set; }
+        public int upOrDownBeforeTurnAround { get; set; }
+        //上下行都填写一份
+        public bool bothUpAndDown { get; set; }
         //主站标签，徐兰场/京广场/城际场等，用于填时刻表确定位置
         public Station mainStation { get; set; }
         public List<Station> newStations { get; set; }
@@ -25,12 +28,67 @@ namespace AutomaticTimeTableMakingTools.Models
             secondTrainNum = "";
             startStation = "";
             stopStation = "";
-            stopStation = "";
             upOrDown = false;
+            bothUpAndDown = false;
+            upOrDownBeforeTurnAround = -1;
             mainStation = new Station();
             newStations = new List<Station>();
             shownInFiles = new List<TrainFile>();
+                
+        }
+
+        public Train(string _firstTrainNum = "", string _secondTrainNum = "", string _startStation = "",
+                                string _stopStation = "", bool _upOrDown = false, Station _mainStation = null, List<Station> _newStations = null, List<TrainFile> _shownInFiles = null, bool _bothUpAndDown = false,int _beforeTurnAround=-1)
+        {
+            firstTrainNum = _firstTrainNum;
+            secondTrainNum = _secondTrainNum;
+            startStation = _startStation;
+            stopStation = _stopStation;
+            upOrDown = _upOrDown;
+            bothUpAndDown = _bothUpAndDown;
+            upOrDownBeforeTurnAround = _beforeTurnAround;
+
+            if(_mainStation == null)
+            {
+                mainStation = new Station();
+            }
+            else
+            {
+                mainStation = new Station(_mainStation);
+            }
+
+            if (_newStations == null)
+            {
+                newStations = new List<Station>();
+            }
+            else
+            {
+                List<Station> _tempStation = new List<Station>();
+                foreach(Station _s in _newStations)
+                {
+                    _tempStation.Add(new Station(_s));
+                }
+                newStations = _tempStation;
+            }
+
+            if (_shownInFiles == null)
+            {
+                shownInFiles = new List<TrainFile>();
+            }
+            else
+            {
+                shownInFiles = _shownInFiles;
+            }
+
     }
+
+        public Train Clone()
+        {
+            Train _t = new Train(this.firstTrainNum, this.secondTrainNum, this.startStation, this.stopStation, this.upOrDown, this.mainStation, this.newStations, this.shownInFiles,this.bothUpAndDown,this.upOrDownBeforeTurnAround);
+            return _t;
+        }
+
+
 
         //重写的CompareTo方法，根据Id排序
         public int CompareTo(Train otherTrain)
@@ -47,21 +105,21 @@ namespace AutomaticTimeTableMakingTools.Models
             string thisStartedTime = "";
             string otherStartedTime = "";
             Regex reg = new Regex(@"[\u4e00-\u9fa5]");
-            if (reg.IsMatch(mainStation.startedTime))
+            if (reg.IsMatch(mainStation.startedTime) || mainStation.startedTime.Contains("--"))
             {//有中文，则有接续
                 thisStartedTime = mainStation.stoppedTime.Replace(":", "").Trim();
             }
             else
             {
-                thisStartedTime = mainStation.startedTime;
+                thisStartedTime = mainStation.startedTime.Replace(":", "").Trim();
             }
-            if (reg.IsMatch(otherTrain.mainStation.startedTime))
+            if (reg.IsMatch(otherTrain.mainStation.startedTime) || otherTrain.mainStation.startedTime.Contains("--"))
             {
                 otherStartedTime = otherTrain.mainStation.stoppedTime.Replace(":", "").Trim();
             }
             else
             {
-                otherStartedTime = otherTrain.mainStation.startedTime;
+                otherStartedTime = otherTrain.mainStation.startedTime.Replace(":", "").Trim();
             }
 
             if (mainStation == null || otherTrain.mainStation == null)
