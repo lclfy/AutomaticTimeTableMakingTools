@@ -3062,15 +3062,16 @@ namespace AutomaticTimeTableMakingTools
 
                                         if (findColumn(temp_TimeTableStations, table.Title, i) != null)
                                         {
-                                            if (_train.firstTrainNum.Contains("G1593") || _train.firstTrainNum.Contains("G1592"))
+                                            if (_train.firstTrainNum.Contains("G6661"))
                                             {
-                                                if (table.Title.Contains("京广场"))
+                                                if (table.Title.Contains("寺后"))
                                                 {
                                                     int test = 0;
                                                 }
 
                                             }
-                                            currentStation = findColumn(temp_TimeTableStations, _station.stationName, i);
+                                            //分上下行进行匹配，避免上行车填写到下行车区域了
+                                            currentStation = findColumn(temp_TimeTableStations, _station.stationName, i,_train.upOrDown,true);
                                             //折角车到达车次的折角后车站不显示
                                             //发车车次的折角前车站不显示
                                             if(_train.bothUpAndDown == true)
@@ -3128,7 +3129,9 @@ namespace AutomaticTimeTableMakingTools
                                                     {
                                                         newRow.CreateCell(currentStation.stoppedTimeColumn);
                                                     }
-                                                    if (stoppedTime.Contains("通过") &&
+                                                    if ((stoppedTime.Contains("通过") ||
+                                                        stoppedTime.Contains("--")||
+                                                        stoppedTime.Contains("..."))&&
                                                         currentStation.startedTimeColumn == 0)
                                                     {//如果是只显示一个时间(只显示“到达”)，但是又要都显示上时间的话（不能显示“通过”）
                                                         stoppedTime = _station.startedTime;
@@ -3153,7 +3156,9 @@ namespace AutomaticTimeTableMakingTools
                                                     {
                                                         newRow.CreateCell(currentStation.startedTimeColumn);
                                                     }
-                                                    if (startedTime.Contains("终到") &&
+                                                    if ((startedTime.Contains("终到") ||
+                                                        startedTime.Contains("--") ||
+                                                        startedTime.Contains("...") )&&
                                                         currentStation.stoppedTimeColumn == 0)
                                                     {//如果是只显示一个时间(只显示“发出”)，但是又要都显示上时间的话（不能显示“终到”）
                                                         startedTime = _station.stoppedTime;
@@ -3279,7 +3284,7 @@ namespace AutomaticTimeTableMakingTools
                 return startTime;
         }
 
-        private Stations_TimeTable findColumn(List<Stations_TimeTable> temp_TimeTableStations,string searchedName, int startColumn)
+        private Stations_TimeTable findColumn(List<Stations_TimeTable> temp_TimeTableStations,string searchedName, int startColumn,bool upOrDown = false,bool ifFindUpOrDown = false)
         {//找列名对应的列的车站
             Stations_TimeTable targetColumn = new Stations_TimeTable();
             bool hasGotTheColumn = false;
@@ -3296,6 +3301,12 @@ namespace AutomaticTimeTableMakingTools
                         continue;
                     }
                     */
+                    //上下行必须对应，不能上行车填到下行区域
+                    //增加一个默认参数ifFindUpOrDown，不填写的话就不找上下行，填的话就找上下行
+                    if(ifFindUpOrDown && upOrDown != temp_TimeTableStations[q].upOrDown)
+                    {
+                        continue;
+                    }
                     if (searchedName.Trim().Equals("郑州"))
                     {
                         continue;

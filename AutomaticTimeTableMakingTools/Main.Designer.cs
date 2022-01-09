@@ -97,7 +97,7 @@
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(257, 41);
             this.label6.TabIndex = 20;
-            this.label6.Text = "Build 20210619";
+            this.label6.Text = "Build 20220109";
             // 
             // label7
             // 
