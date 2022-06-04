@@ -43,7 +43,7 @@ namespace AutomaticTimeTableMakingTools
             InitializeComponent();
             initUI();
             getUpOrDown(allUpOrDownStations);
-            this.Text = "运转车间运行图调整辅助工具";
+            this.Text = "郑州站运行图调整辅助工具（制表）";
         }
 
         //get站间行别关系
@@ -69,9 +69,9 @@ namespace AutomaticTimeTableMakingTools
                 }
                 fileStream.Close();
                 //填写行别:格式如下
-                //车站                    行别     1 2 3 4 5 6
+                //车站        行别     1 2 3 4 5 6
                 //郑州东京广场 上行     X
-                //                             下行     X
+                //            下行     X
                 ISheet sheet = null;
                 int numberOfObjects = 0;
                 if (workbook!=null &&workbook.NumberOfSheets != 0)
@@ -240,8 +240,17 @@ namespace AutomaticTimeTableMakingTools
                                 }
                                 else if(_inputType == 1)
                                 {
-                                    string[] _allStations = new string[] { "曹古寺", "二郎庙", "鸿宝", "郑州东京广场", "南曹", "寺后", "郑州东徐兰场", "郑开", "郑州南郑万场", "郑州东城际场", "郑州南城际场", "郑州东疏解区", "郑州东动车所", "郑州南动车所","新郑机场","周口东","民权北","兰考南","开封北","许昌北","许昌东","鄢陵","扶沟南","西华","淮阳南","沈丘北","长葛北","禹州","郏县" };
-                                    for (int ij = 0; ij < _allStations.Length; ij++)
+                                    List<string> _allStations = new List<string>();
+                                    foreach(upOrDown_Stations _uds in allUpOrDownStations)
+                                    {
+                                        if (!_uds.stationName.Contains("阎块"))
+                                        {
+                                            _allStations.Add(_uds.stationName);
+                                        }
+                                    }
+                                    _allStations.Add("郑开");
+                                    //string[] _allStations = new string[] { "曹古寺", "二郎庙", "鸿宝", "郑州东京广场", "南曹", "寺后", "郑州东徐兰场", "郑开", "郑州航空港郑万场", "郑州东城际场", "郑州航空港城际场", "郑州东疏解区", "郑州东动车所", "郑州南动车所","新郑机场","周口东","民权北","兰考南","开封北","许昌北","许昌东","鄢陵","扶沟南","西华","淮阳南","沈丘北","长葛北","禹州","郏县" };
+                                    for (int ij = 0; ij < _allStations.Count; ij++)
                                     {
                                         if ((titleName.Contains(_allStations[ij]) &&
                                                                  titleName.Contains("上行")) ||
@@ -318,7 +327,7 @@ namespace AutomaticTimeTableMakingTools
                                     } 
                                     currentStation = currentStation.Trim();
                                     Stations_TimeTable _tempStation = new Stations_TimeTable();
-                                    //此时需要找这趟车是上行还是下行
+                                    //此时需要找这个站是上行还是下行
                                     IRow titleRow = sheet.GetRow(_timeTable.titleRow);
                                     _tempStation.stationColumn = j;
                                     _tempStation.stationName = currentStation;
@@ -354,7 +363,7 @@ namespace AutomaticTimeTableMakingTools
                                     }
                                     else
                                     {
-                                        MessageBox.Show("选定的列车时刻表表头不具有规定格式：“郑州东站…时刻表（上行）”或“（线路所）…时刻表（上行）”", "提示", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                        MessageBox.Show("请检查，表头站名未添加至“车站行别”文件内，或某表头不具有规定格式：“…时刻表（上行）”", "提示", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                                         return null;
                                     }
                                     //此时依然不能直接添加，需要寻找到达-股道-发出所在列
@@ -446,7 +455,7 @@ namespace AutomaticTimeTableMakingTools
                 }
                 else if (_timeTable.Title == null || _timeTable.Title.Length == 0)
                 {
-                    MessageBox.Show("选定的列车时刻表表头不具有规定格式：“郑州东站…时刻表（上行）”或“（线路所）…时刻表（上行）”", "提示", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show("请检查，表头站名未添加至“车站行别”文件内，或某表头不具有规定格式：“…时刻表（上行）", "提示", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     return null;
                 }
                 allStations = allStations.Remove(0,1);
@@ -1786,9 +1795,9 @@ namespace AutomaticTimeTableMakingTools
                                 bool hasGot = false;
                                 for (int _zznPlace = 0; _zznPlace < _tempTrain.newStations.Count; _zznPlace++)
                                 {
-                                    if (_tempTrain.newStations[_zznPlace].stationName.Contains("郑州南郑万场") ||
-                                        _tempTrain.newStations[_zznPlace].stationName.Contains("郑州南郑阜场") ||
-                                        _tempTrain.newStations[_zznPlace].stationName.Contains("郑州南城际场"))
+                                    if (_tempTrain.newStations[_zznPlace].stationName.Contains("郑州航空港郑万场") ||
+                                        _tempTrain.newStations[_zznPlace].stationName.Contains("郑州航空港郑阜场") ||
+                                        _tempTrain.newStations[_zznPlace].stationName.Contains("郑州航空港城际场"))
                                     {
                                         //郑州南站和郑州南某某场都填进去
                                         Station _clonedStation = new Station();
@@ -1801,7 +1810,7 @@ namespace AutomaticTimeTableMakingTools
                                         _clonedStation.stationTrackNum = _track;
                                         _clonedStation.stationName = _name;
 
-                                        _tempTrain.newStations[_zznPlace].stationName = "郑州南站";
+                                        _tempTrain.newStations[_zznPlace].stationName = "郑州航空港";
                                         _tempTrain.newStations.Add(_clonedStation);
                                         _zzn = _tempTrain.newStations[_zznPlace];
                                         //eastEMUGarageTrackLine = getEastEMUGarageTrackLine(_zzn);
