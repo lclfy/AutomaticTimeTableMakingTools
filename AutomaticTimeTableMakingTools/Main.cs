@@ -2130,12 +2130,12 @@ namespace AutomaticTimeTableMakingTools
                         }
 
                         //特殊情况：马头岗徐兰场
-                        else if(_station.stationName.Replace("线路所", "").Replace("站", "").Contains("马头岗") && mainStation.Contains("京广场"))
+                        else if(_station.stationName.Replace("线路所", "").Replace("站", "").Contains("马头岗") && mainStation.Contains("郑州东京广场"))
                         {//如果这个车不经过京广场，添加进去（用徐兰的点在京广场当主站以便排序），增加stationtype=-1表示排序车站不做打印
                             bool hasGet = false;
                             foreach(Station _s in _allTrains[j].newStations)
                             {
-                                if (_s.stationName.Contains("徐兰场"))
+                                if (_s.stationName.Contains("郑州东徐兰场"))
                                 {
                                     _tempTrain.mainStation.stationName = "郑州东京广场";
                                     _tempTrain.mainStation.startedTime = _s.startedTime;
@@ -2143,10 +2143,9 @@ namespace AutomaticTimeTableMakingTools
                                     _tempTrain.mainStation.stoppedTime = _s.stoppedTime;
                                     _tempTrain.mainStation.stationType = -1;
                                 }
-                                if (_s.stationName.Contains("京广场"))
+                                if (_s.stationName.Contains("郑州东京广场"))
                                 {
                                     hasGet = true;
-                                    break;
                                 }
                             }
                             if(hasGet == false)
