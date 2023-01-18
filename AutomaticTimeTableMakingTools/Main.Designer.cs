@@ -47,7 +47,7 @@
             // 
             this.ImportNewTimeTable_btn.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.ImportNewTimeTable_btn.Location = new System.Drawing.Point(85, 221);
-            this.ImportNewTimeTable_btn.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.ImportNewTimeTable_btn.Margin = new System.Windows.Forms.Padding(5);
             this.ImportNewTimeTable_btn.Name = "ImportNewTimeTable_btn";
             this.ImportNewTimeTable_btn.Size = new System.Drawing.Size(233, 77);
             this.ImportNewTimeTable_btn.TabIndex = 0;
@@ -68,7 +68,7 @@
             // 
             this.getTrains_btn.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.getTrains_btn.Location = new System.Drawing.Point(755, 221);
-            this.getTrains_btn.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.getTrains_btn.Margin = new System.Windows.Forms.Padding(5);
             this.getTrains_btn.Name = "getTrains_btn";
             this.getTrains_btn.Size = new System.Drawing.Size(233, 77);
             this.getTrains_btn.TabIndex = 4;
@@ -116,7 +116,7 @@
             // 
             this.ImportDistributedTrainTimeTableFile_btn.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.ImportDistributedTrainTimeTableFile_btn.Location = new System.Drawing.Point(427, 221);
-            this.ImportDistributedTrainTimeTableFile_btn.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.ImportDistributedTrainTimeTableFile_btn.Margin = new System.Windows.Forms.Padding(5);
             this.ImportDistributedTrainTimeTableFile_btn.Name = "ImportDistributedTrainTimeTableFile_btn";
             this.ImportDistributedTrainTimeTableFile_btn.Size = new System.Drawing.Size(233, 77);
             this.ImportDistributedTrainTimeTableFile_btn.TabIndex = 22;
@@ -181,12 +181,12 @@
             // 
             this.label3.AutoSize = true;
             this.label3.ForeColor = System.Drawing.Color.OrangeRed;
-            this.label3.Location = new System.Drawing.Point(43, 568);
+            this.label3.Location = new System.Drawing.Point(154, 568);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(946, 24);
+            this.label3.Size = new System.Drawing.Size(778, 24);
             this.label3.TabIndex = 29;
-            this.label3.Text = "修改：把“郑州东京广场”和“新乡东京广场”区分开，马头岗徐兰场车显示到京广场里";
+            this.label3.Text = "修改：把“郑州东京广场”和“新乡东京广场”区分开，跨场车问题修复";
             // 
             // Main
             // 
@@ -206,7 +206,7 @@
             this.Controls.Add(this.getTrains_btn);
             this.Controls.Add(this.NewTimeTableFile_lbl);
             this.Controls.Add(this.ImportNewTimeTable_btn);
-            this.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.Margin = new System.Windows.Forms.Padding(5);
             this.Name = "Main";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Main_Load);

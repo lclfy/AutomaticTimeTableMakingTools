@@ -2244,7 +2244,6 @@ namespace AutomaticTimeTableMakingTools
                                 if (_s.stationName.Contains("郑州东城际场"))
                                 {
                                     hasGet = true;
-                                    break;
                                 }
                             }
                             if (hasGet == false)
@@ -2311,7 +2310,6 @@ namespace AutomaticTimeTableMakingTools
                                 if (_s.stationName.Contains("寺后"))
                                 {
                                     hasGet = true;
-                                    break;
                                 }
                             }
                             if (hasGet == false)
